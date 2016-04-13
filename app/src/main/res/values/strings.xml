@@ -1,6 +1,21 @@
 <resources>
     <string name="app_name">Minder - Tasks</string>
-
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hint_input_title">Task Name</string>
+    <string name="label_input_duration">Duration:</string>
+    <string name="label_input_category">Category:</string>
+    <string name="none">None</string>
+    <string name="label_input_time">Due Time:</string>
+    <string name="label_input_date">Due Date:</string>
+    <string-array name="array_input_duration">
+        <item>&lt;5 mins</item>
+        <item>5 mins</item>
+        <item>10 mins</item>
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hr</item>
+        <item>1.5 hrs</item>
+        <item>2 hrs</item>
+        <item>3 hrs</item>
+        <item>4+ hrs</item>
+    </string-array>
 </resources>
