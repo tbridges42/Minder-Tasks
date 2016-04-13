@@ -6,6 +6,8 @@
     <string name="none">None</string>
     <string name="label_input_time">Due Time:</string>
     <string name="label_input_date">Due Date:</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string-array name="array_input_duration">
         <item>&lt;5 mins</item>
         <item>5 mins</item>
@@ -17,5 +19,8 @@
         <item>2 hrs</item>
         <item>3 hrs</item>
         <item>4+ hrs</item>
+    </string-array>
+    <string-array name="array_input_category_default">
+        <item>No category</item>
     </string-array>
 </resources>
