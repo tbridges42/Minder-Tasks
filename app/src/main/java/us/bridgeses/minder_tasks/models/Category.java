@@ -8,8 +8,8 @@ import android.os.Parcelable;
  */
 public class Category implements Parcelable {
 
-    private String name;
-    private int color;
+    private final String name;
+    private final int color;
 
     public Category(String name, int color) {
         this.name = name;
