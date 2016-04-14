@@ -10,13 +10,13 @@ import java.util.Calendar;
  */
 public class Task implements Parcelable {
 
-    private String name;
-    private long creationTime;
-    private long dueTime;
-    private long duration;
-    private Category category;
+    private final String name;
+    private final long creationTime;
+    private final long dueTime;
+    private final int duration;
+    private final Category category;
 
-    private Task(String name, long creationTime, long dueTime, long duration, Category category) {
+    private Task(String name, long creationTime, long dueTime, int duration, Category category) {
         this.name = name;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
@@ -54,7 +54,7 @@ public class Task implements Parcelable {
         dest.writeString(name);
         dest.writeLong(creationTime);
         dest.writeLong(dueTime);
-        dest.writeLong(duration);
+        dest.writeInt(duration);
         dest.writeParcelable(category,0);
     }
 
@@ -66,7 +66,7 @@ public class Task implements Parcelable {
                     Task.Builder builder = new Task.Builder(source.readString());
                     builder.setCreationTime(source.readLong());
                     builder.setDueTime(source.readLong());
-                    builder.setDuration(source.readLong());
+                    builder.setDuration(source.readInt());
                     builder.setCategory((Category)
                             source.readParcelable(Category.class.getClassLoader()));
                     return builder.build();
@@ -82,7 +82,7 @@ public class Task implements Parcelable {
         private String name;
         private long creationTime = Calendar.getInstance().getTimeInMillis();
         private long dueTime = -1L;
-        private long duration = -1L;
+        private int duration = -1;
 
         public Category getCategory() {
             return category;
@@ -100,7 +100,7 @@ public class Task implements Parcelable {
             return dueTime;
         }
 
-        public long getDuration() {
+        public int getDuration() {
             return duration;
         }
 
@@ -134,8 +134,8 @@ public class Task implements Parcelable {
             return this;
         }
 
-        public Builder setDuration(long time) {
-            if (time < -1L) {
+        public Builder setDuration(int time) {
+            if (time < -1) {
                 throw new IllegalArgumentException("Invalid time");
             }
             this.duration = time;
