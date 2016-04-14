@@ -28,11 +28,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_input_duration"
                 />
-            <Spinner
+            <EditText
                 android:id="@+id/input_duration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:inputType="number"
+                android:text="@string/none"
+                android:selectAllOnFocus="true"
                 />
             <TextView
                 android:id="@+id/label_category"
