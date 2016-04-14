@@ -15,12 +15,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import us.bridgeses.minder_tasks.R;
+import us.bridgeses.minder_tasks.models.Task;
 
 /**
  * Allows user to create new tasks
  */
 public class TaskEditorFragment extends Fragment {
 
+    Task.Builder taskBuilder;
     EditText inputTitle;
     Spinner durationSpinner;
     Spinner categorySpinner;
@@ -34,9 +36,21 @@ public class TaskEditorFragment extends Fragment {
         void close();
     }
 
+    public static TaskEditorFragment newInstance(Task task) {
+        TaskEditorFragment fragment = new TaskEditorFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("task",task);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if ((args != null) && (!args.isEmpty())) {
+            taskBuilder = new Task.Builder((Task) args.getParcelable("task"));
+        }
     }
 
     @Override
@@ -50,6 +64,7 @@ public class TaskEditorFragment extends Fragment {
         }
     }
 
+    @SuppressWarnings("deprecation") // This method is necessary for SDK < 23
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
@@ -59,16 +74,6 @@ public class TaskEditorFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement CloseListener");
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("Title", inputTitle.getText().toString());
-        outState.putInt("Duration ID", durationSpinner.getSelectedItemPosition());
-        outState.putInt("Category ID", categorySpinner.getSelectedItemPosition());
-        outState.putString("Time", inputTime.getText().toString());
-        outState.putString("Date", inputDate.getText().toString());
     }
 
     @Override
@@ -109,16 +114,15 @@ public class TaskEditorFragment extends Fragment {
     }
 
     public void initSpinner(Spinner spinner, int array, int layout, int dropdownLayout) {
-        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 array, layout);
-        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(dropdownLayout);
-        // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
     }
 
-    public void save() {}
+    public void save() {
+
+    }
 
     public void cancel() {
         callback.close();
