@@ -8,10 +8,12 @@ import android.os.Parcelable;
  */
 public class Category implements Parcelable {
 
+    private final long id;
     private final String name;
     private final int color;
 
-    public Category(String name, int color) {
+    public Category(long id, String name, int color) {
+        this.id = id;
         this.name = name;
         this.color = color;
     }
@@ -31,6 +33,7 @@ public class Category implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeInt(color);
     }
@@ -40,7 +43,7 @@ public class Category implements Parcelable {
 
         @Override
         public Category createFromParcel(Parcel source) {
-            return new Category(source.readString(), source.readInt());
+            return new Category(source.readLong(), source.readString(), source.readInt());
         }
 
         @Override

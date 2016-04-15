@@ -10,13 +10,16 @@ import java.util.Calendar;
  */
 public class Task implements Parcelable {
 
+    private final long id;
     private final String name;
     private final long creationTime;
     private final long dueTime;
     private final int duration;
     private final Category category;
 
-    private Task(String name, long creationTime, long dueTime, int duration, Category category) {
+    private Task(long id, String name, long creationTime, long dueTime,
+                 int duration, Category category) {
+        this.id = id;
         this.name = name;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
@@ -52,6 +55,7 @@ public class Task implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeLong(id);
         dest.writeLong(creationTime);
         dest.writeLong(dueTime);
         dest.writeInt(duration);
@@ -64,6 +68,7 @@ public class Task implements Parcelable {
                 @Override
                 public Task createFromParcel(Parcel source) {
                     Task.Builder builder = new Task.Builder(source.readString());
+                    builder.setId(source.readLong());
                     builder.setCreationTime(source.readLong());
                     builder.setDueTime(source.readLong());
                     builder.setDuration(source.readInt());
@@ -83,6 +88,7 @@ public class Task implements Parcelable {
         private long creationTime = Calendar.getInstance().getTimeInMillis();
         private long dueTime = -1L;
         private int duration = -1;
+        private long id = -1L;
 
         public Category getCategory() {
             return category;
@@ -148,7 +154,11 @@ public class Task implements Parcelable {
         }
 
         public Task build() {
-            return new Task(name, creationTime, dueTime, duration, category);
+            return new Task(id, name, creationTime, dueTime, duration, category);
+        }
+
+        public void setId(long id) {
+            this.id = id;
         }
     }
 }
