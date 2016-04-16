@@ -1,6 +1,7 @@
 package us.bridgeses.minder_tasks.startup;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.File;
@@ -49,6 +50,9 @@ final class FirstRun extends Startup {
         Boolean success = createStyleDirectory();
         if (!success) {
             Log.w(this.getClass().getSimpleName(), "Could not create styles directory");
+        }
+        else {
+            preferences.put("hasRun", true);
         }
     }
 

@@ -24,7 +24,7 @@ public class TaskEditorFragment extends Fragment {
 
     Task.Builder taskBuilder;
     EditText inputTitle;
-    Spinner durationSpinner;
+    EditText inputDuration;
     Spinner categorySpinner;
     TextView inputTime;
     TextView inputDate;
@@ -88,7 +88,7 @@ public class TaskEditorFragment extends Fragment {
     
     public void setHandles(View view) {
         inputTitle = (EditText) view.findViewById(R.id.input_title);
-        durationSpinner = (Spinner) view.findViewById(R.id.input_duration);
+        inputDuration = (EditText) view.findViewById(R.id.input_duration);
         categorySpinner = (Spinner) view.findViewById(R.id.input_category);
         inputTime = (TextView) view.findViewById(R.id.input_time);
         inputDate = (TextView) view.findViewById(R.id.input_date);
@@ -97,8 +97,6 @@ public class TaskEditorFragment extends Fragment {
     }
     
     public void initHandles(Bundle savedInstanceState) {
-        initSpinner(durationSpinner, R.array.array_input_duration,
-                android.R.layout.simple_spinner_item, android.R.layout.simple_spinner_dropdown_item);
         initSpinner(categorySpinner, R.array.array_input_category_default,
                 android.R.layout.simple_spinner_item, android.R.layout.simple_spinner_dropdown_item);
         save.setOnClickListener(new saveListener());
@@ -106,9 +104,8 @@ public class TaskEditorFragment extends Fragment {
         if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
             return;
         }
-        inputTitle.setText(savedInstanceState.getString("Title"));
-        durationSpinner.setSelection(savedInstanceState.getInt("Duration ID"), false);
-        categorySpinner.setSelection(savedInstanceState.getInt("Duration ID"), false);
+        inputTitle.setText(taskBuilder.getName());
+        inputDuration.setText(taskBuilder.getDuration());
         inputTime.setText(savedInstanceState.getString("Time"));
         inputDate.setText(savedInstanceState.getString("Date"));
     }
