@@ -44,7 +44,8 @@ public interface TasksContract {
         String COLUMN_COLOR = "color";
         String COLUMN_COLOR_TYPE = " INTEGER";
 
-        String COLUMN_DECLARATION = COLUMN_NAME + COLUMN_NAME_TYPE + ", "
+        String COLUMN_DECLARATION = _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_NAME + COLUMN_NAME_TYPE + ", "
                 + COLUMN_COLOR + COLUMN_COLOR_TYPE;
     }
 
@@ -85,7 +86,8 @@ public interface TasksContract {
                 + "(" + _ID + ")"
                 + " ON DELETE SET NULL";
 
-        String COLUMN_DECLARATION = COLUMN_NAME +  COLUMN_NAME_TYPE + ", "
+        String COLUMN_DECLARATION = _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_NAME +  COLUMN_NAME_TYPE + ", "
                 + COLUMN_CREATION_TIME + COLUMN_CREATION_TIME_TYPE + ", "
                 + COLUMN_DUE_TIME + COLUMN_DUE_TIME_TYPE + ", "
                 + COLUMN_DURATION + COLUMN_DURATION_TYPE + ", "
