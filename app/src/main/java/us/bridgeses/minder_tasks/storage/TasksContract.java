@@ -18,9 +18,6 @@ public interface TasksContract {
 
     String TASKS_TABLE = "tasks_table";
 
-    Uri CATEGORIES_URI = BASE_CONTENT_URI.buildUpon().appendPath(CATEGORIES_TABLE).build();
-    Uri TASKS_URI = BASE_CONTENT_URI.buildUpon().appendPath(TASKS_TABLE).build();
-
     /**
      * Contract for the persistence of categories
      * Should be implemented by any classes that deal specifically with the persistence of categories
@@ -43,9 +40,9 @@ public interface TasksContract {
                 + CATEGORIES_TABLE;
 
         String COLUMN_NAME = "name";
-        String COLUMN_NAME_TYPE = "TEXT NOT NULL";
+        String COLUMN_NAME_TYPE = " TEXT NOT NULL";
         String COLUMN_COLOR = "color";
-        String COLUMN_COLOR_TYPE = "INTEGER";
+        String COLUMN_COLOR_TYPE = " INTEGER";
 
         String COLUMN_DECLARATION = COLUMN_NAME + COLUMN_NAME_TYPE + ", "
                 + COLUMN_COLOR + COLUMN_COLOR_TYPE;
@@ -73,7 +70,7 @@ public interface TasksContract {
                 + TASKS_TABLE;
 
         String COLUMN_NAME = "name";
-        String COLUMN_NAME_TYPE = "TEXT NOT NULL";
+        String COLUMN_NAME_TYPE = " TEXT NOT NULL";
         String COLUMN_CREATION_TIME = "created";
         String COLUMN_CREATION_TIME_TYPE = " INTEGER NOT NULL";
         String COLUMN_DUE_TIME = "due";
@@ -88,7 +85,7 @@ public interface TasksContract {
                 + "(" + _ID + ")"
                 + " ON DELETE SET NULL";
 
-        String COLUMN_DECLARATION = COLUMN_NAME + COLUMN_NAME_TYPE + ", "
+        String COLUMN_DECLARATION = COLUMN_NAME +  COLUMN_NAME_TYPE + ", "
                 + COLUMN_CREATION_TIME + COLUMN_CREATION_TIME_TYPE + ", "
                 + COLUMN_DUE_TIME + COLUMN_DUE_TIME_TYPE + ", "
                 + COLUMN_DURATION + COLUMN_DURATION_TYPE + ", "
