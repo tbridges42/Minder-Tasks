@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 /**
  * Content Provider for returning Tasks and Categories
@@ -33,7 +34,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         matcher.addURI(CONTENT_AUTHORITY, TASKS_TABLE, MULTIPLE_TASKS);
         matcher.addURI(CONTENT_AUTHORITY, TASKS_TABLE + "/#", SINGLE_TASK);
         matcher.addURI(CONTENT_AUTHORITY, CATEGORIES_TABLE, MULTIPLE_CATEGORIES);
-        matcher.addURI(CONTENT_AUTHORITY, TASKS_TABLE + "/#", SINGLE_CATEGORY);
+        matcher.addURI(CONTENT_AUTHORITY, CATEGORIES_TABLE + "/#", SINGLE_CATEGORY);
         return matcher;
     }
 
@@ -90,7 +91,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
                 result = query(CATEGORIES_TABLE, projection, selection, selectionArgs, sortOrder);
                 break;
             case SINGLE_TASK:
-                selection = CategoryEntry._ID + " = ?";
+                selection = TasksEntry._ID + " = ?";
                 selectionArgs = new String[] { uri.getLastPathSegment() };
                 result = query(TASKS_TABLE, projection, selection, selectionArgs, sortOrder);
                 break;
