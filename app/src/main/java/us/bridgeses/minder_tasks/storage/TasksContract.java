@@ -18,6 +18,9 @@ public interface TasksContract {
 
     String TASKS_TABLE = "tasks_table";
 
+    Uri CATEGORIES_URI = BASE_CONTENT_URI.buildUpon().appendPath(CATEGORIES_TABLE).build();
+    Uri TASKS_URI = BASE_CONTENT_URI.buildUpon().appendPath(TASKS_TABLE).build();
+
     /**
      * Contract for the persistence of categories
      * Should be implemented by any classes that deal specifically with the persistence of categories
