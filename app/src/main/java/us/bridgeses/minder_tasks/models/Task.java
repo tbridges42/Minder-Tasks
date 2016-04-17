@@ -121,6 +121,7 @@ public class Task implements Parcelable {
         }
 
         public Builder(Task task) {
+            this.id = task.getId();
             this.name = task.getName();
             this.creationTime = task.getCreationTime();
             this.dueTime = task.dueTime;
@@ -163,6 +164,11 @@ public class Task implements Parcelable {
 
         public Builder setId(long id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
             return this;
         }
     }
