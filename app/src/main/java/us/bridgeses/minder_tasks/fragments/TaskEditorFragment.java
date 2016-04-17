@@ -13,9 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import us.bridgeses.minder_tasks.R;
 import us.bridgeses.minder_tasks.models.Task;
+import us.bridgeses.minder_tasks.storage.PersistenceHelper;
 
 /**
  * Allows user to create new tasks
@@ -50,6 +52,9 @@ public class TaskEditorFragment extends Fragment {
         Bundle args = getArguments();
         if ((args != null) && (!args.isEmpty())) {
             taskBuilder = new Task.Builder((Task) args.getParcelable("task"));
+        }
+        else {
+            taskBuilder = new Task.Builder("");
         }
     }
 
@@ -118,7 +123,10 @@ public class TaskEditorFragment extends Fragment {
     }
 
     public void save() {
-
+        PersistenceHelper helper = new PersistenceHelper(getActivity());
+        taskBuilder.setName(inputTitle.getText().toString());
+        helper.saveTask(taskBuilder.build());
+        callback.close();
     }
 
     public void cancel() {
