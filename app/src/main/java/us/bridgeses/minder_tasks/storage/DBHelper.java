@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
     private static final int DATABASE_VERSION = 1;
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, SCHEMA_VERSION + DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, SCHEMA_VERSION << 16 | DATABASE_VERSION);
     }
 
     @Override
@@ -25,6 +25,6 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        onCreate(db);
     }
 }
