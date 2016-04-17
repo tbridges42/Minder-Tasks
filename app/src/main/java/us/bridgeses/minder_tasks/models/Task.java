@@ -83,6 +83,10 @@ public class Task implements Parcelable {
                 }
             };
 
+    public long getId() {
+        return id;
+    }
+
     public static class Builder {
         private String name;
         private long creationTime = Calendar.getInstance().getTimeInMillis();
@@ -157,8 +161,9 @@ public class Task implements Parcelable {
             return new Task(id, name, creationTime, dueTime, duration, category);
         }
 
-        public void setId(long id) {
+        public Builder setId(long id) {
             this.id = id;
+            return this;
         }
     }
 }

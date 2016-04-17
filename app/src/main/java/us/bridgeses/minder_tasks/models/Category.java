@@ -51,4 +51,8 @@ public class Category implements Parcelable {
             return new Category[size];
         }
     };
+
+    public long getId() {
+        return id;
+    }
 }

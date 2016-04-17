@@ -29,7 +29,7 @@ public class TaskTest {
                 .setCreationTime(0)
                 .setDueTime(0)
                 .setDuration(0)
-                .setCategory(new Category("Test Name", Color.RED))
+                .setCategory(new Category(1, "Test Name", Color.RED))
                 .build();
     }
 
@@ -38,8 +38,8 @@ public class TaskTest {
         String testName = "Test Name";
         long createTime = 5435436L;
         long dueTime = 43254656L;
-        long duration = 43524746587L;
-        Category category = new Category("Test",Color.RED);
+        int duration = 4352474;
+        Category category = new Category(1, "Test",Color.RED);
         Task testTask = new Task.Builder(testName)
                 .setCreationTime(createTime)
                 .setDueTime(dueTime)
@@ -74,7 +74,7 @@ public class TaskTest {
     public void testIllegalDurationTimeWithBuilder() {
         thrown.expect(IllegalArgumentException.class);
         Task testTask = new Task.Builder("TestName")
-                .setDuration(-5L)
+                .setDuration(-5)
                 .build();
     }
 
@@ -105,7 +105,7 @@ public class TaskTest {
 
     @Test
     public void testGetDuration() {
-        long duration = 54364365446546L;
+        int duration = 543643654;
         Task testTask = new Task.Builder("Test Name")
                 .setDuration(duration)
                 .build();
@@ -114,7 +114,7 @@ public class TaskTest {
 
     @Test
     public void testGetCategory() {
-        Category testCategory = new Category("Test name", Color.RED);
+        Category testCategory = new Category(1, "Test name", Color.RED);
         Task testTask = new Task.Builder("Test name").setCategory(testCategory).build();
         assertEquals(testCategory, testTask.getCategory());
     }
