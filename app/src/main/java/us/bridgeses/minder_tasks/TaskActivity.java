@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import java.util.Map;
 import us.bridgeses.minder_tasks.adapters.TasksAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
 import us.bridgeses.minder_tasks.startup.StartupFactory;
+import us.bridgeses.minder_tasks.storage.TasksContract;
 
 // TODO: Create preference class to manage saving and loading preferences
 
@@ -44,12 +46,30 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
         findViewById(R.id.add_button).setOnClickListener(this);
 
+        ListView tasks = (ListView) findViewById(R.id.tasks);
+        tasks.setAdapter(createAdapter(createTestBadStuff()));
+
         SharedPreferences sp = getSharedPreferences("default",0);
         Map<String, Object> preferences = Collections.unmodifiableMap(sp.getAll());
         startup(preferences);
         applyStyle(preferences);
     }
 
+    private String[] createTestBadStuff() {
+        String[] badStuff = new String[100];
+        for (int i = 0; i < badStuff.length; i++) {
+            badStuff[i] = "Bad Stuff " + Integer.toString(i);
+        }
+        return badStuff;
+    }
+
+    private ListAdapter createAdapter(String[] badStuff) {
+        Cursor c = getContentResolver().query(TasksContract.TasksEntry.TASK_URI,
+                new String[] { TasksContract.TasksEntry._ID, TasksContract.TasksEntry.COLUMN_NAME},
+                null, null, null);
+        Log.d("taskActivity", Integer.toString(c.getCount()));
+        return new TasksAdapter(this, c, true, R.layout.default_row, badStuff);
+    }
 
     private void startup(Map<String, Object> preferences) {
         StartupFactory factory = new StartupFactory(preferences);
