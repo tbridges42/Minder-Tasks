@@ -16,15 +16,17 @@ public class Task implements Parcelable {
     private final long dueTime;
     private final int duration;
     private final Category category;
+    private final boolean completed;
 
     private Task(long id, String name, long creationTime, long dueTime,
-                 int duration, Category category) {
+                 int duration, Category category, boolean completed) {
         this.id = id;
         this.name = name;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
         this.duration = duration;
         this.category = category;
+        this.completed = completed;
     }
 
     public String getName() {
@@ -39,12 +41,16 @@ public class Task implements Parcelable {
         return dueTime;
     }
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
     }
 
     public Category getCategory() {
         return category;
+    }
+
+    public boolean isCompleted() {
+        return completed;
     }
 
     @Override
@@ -60,6 +66,7 @@ public class Task implements Parcelable {
         dest.writeLong(dueTime);
         dest.writeInt(duration);
         dest.writeParcelable(category,0);
+        dest.writeInt(completed ? 1 : 0);
     }
 
     public static final Parcelable.Creator<Task> CREATOR =
@@ -74,6 +81,7 @@ public class Task implements Parcelable {
                     builder.setDuration(source.readInt());
                     builder.setCategory((Category)
                             source.readParcelable(Category.class.getClassLoader()));
+                    builder.setCompleted(source.readInt() == 1);
                     return builder.build();
                 }
 
@@ -93,6 +101,7 @@ public class Task implements Parcelable {
         private long dueTime = -1L;
         private int duration = -1;
         private long id = -1L;
+        private boolean completed;
 
         public Category getCategory() {
             return category;
@@ -124,9 +133,10 @@ public class Task implements Parcelable {
             this.id = task.getId();
             this.name = task.getName();
             this.creationTime = task.getCreationTime();
-            this.dueTime = task.dueTime;
-            this.duration = task.duration;
-            this.category = task.category;
+            this.dueTime = task.getDueTime();
+            this.duration = task.getDuration();
+            this.category = task.getCategory();
+            this.completed = task.isCompleted();
         }
 
         public Builder setCreationTime(long time) {
@@ -159,7 +169,7 @@ public class Task implements Parcelable {
         }
 
         public Task build() {
-            return new Task(id, name, creationTime, dueTime, duration, category);
+            return new Task(id, name, creationTime, dueTime, duration, category, completed);
         }
 
         public Builder setId(long id) {
@@ -169,6 +179,11 @@ public class Task implements Parcelable {
 
         public Builder setName(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder setCompleted(boolean completed) {
+            this.completed = completed;
             return this;
         }
     }
