@@ -23,6 +23,7 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
         db.execSQL("CREATE TABLE " + TASKS_TABLE + " (" + TasksEntry.COLUMN_DECLARATION + ");");
     }
 
+    //TODO: Change this behavior before release!
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE " + CATEGORIES_TABLE);
