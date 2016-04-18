@@ -8,12 +8,11 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import us.bridgeses.minder_tasks.models.Task;
-import static us.bridgeses.minder_tasks.storage.TasksContract.TasksEntry;
 
 /**
  * Created by Tony on 4/16/2016.
  */
-public class PersistenceHelper {
+public class PersistenceHelper implements TasksContract {
 
     private final Context context;
 
@@ -34,7 +33,9 @@ public class PersistenceHelper {
         values.put(TasksEntry.COLUMN_CREATION_TIME, task.getCreationTime());
         values.put(TasksEntry.COLUMN_DURATION, task.getDuration());
         values.put(TasksEntry.COLUMN_DUE_TIME, task.getDueTime());
-        return Long.parseLong(resolver.insert(TasksEntry.TASK_URI, values).getLastPathSegment());
+        values.put(TasksEntry.COLUMN_COMPLETED, task.isCompleted());
+        Uri uri = resolver.insert(TasksEntry.TASK_URI, values);
+        return Long.parseLong(uri.getLastPathSegment());
     }
 
     public Task loadTask(long id) throws Resources.NotFoundException {
@@ -49,11 +50,13 @@ public class PersistenceHelper {
         long created_time = cursor.getLong(cursor.getColumnIndex(TasksEntry.COLUMN_CREATION_TIME));
         int duration = cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_DURATION));
         long due_time = cursor.getLong(cursor.getColumnIndex(TasksEntry.COLUMN_DUE_TIME));
+        boolean completed = cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1;
         Task task = new Task.Builder(name)
                 .setId(id)
                 .setCreationTime(created_time)
                 .setDueTime(due_time)
                 .setDuration(duration)
+                .setCompleted(completed)
                 .build();
         cursor.close();
         return task;
