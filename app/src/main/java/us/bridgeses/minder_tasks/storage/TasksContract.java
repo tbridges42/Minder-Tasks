@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
  */
 public interface TasksContract {
 
-    int SCHEMA_VERSION = 2;
+    int SCHEMA_VERSION = 3;
 
     String CONTENT_AUTHORITY = "us.bridgeses.tasks_provider";
     Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -93,7 +93,8 @@ public interface TasksContract {
                 + COLUMN_CREATION_TIME + COLUMN_CREATION_TIME_TYPE + ", "
                 + COLUMN_DUE_TIME + COLUMN_DUE_TIME_TYPE + ", "
                 + COLUMN_DURATION + COLUMN_DURATION_TYPE + ", "
-                + COLUMN_CATEGORY + COLUMN_CATEGORY_TYPE + ", "
-                + COLUMN_COMPLETED + COLUMN_COMPLETED_TYPE;
+                + COLUMN_COMPLETED + COLUMN_COMPLETED_TYPE + ", "
+                + COLUMN_CATEGORY + COLUMN_CATEGORY_TYPE
+                ;
     }
 }
