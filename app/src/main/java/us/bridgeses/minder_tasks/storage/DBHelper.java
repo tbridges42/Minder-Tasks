@@ -25,6 +25,8 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE " + CATEGORIES_TABLE);
+        db.execSQL("DROP TABLE " + TASKS_TABLE);
         onCreate(db);
     }
 }
