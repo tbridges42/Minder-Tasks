@@ -23,6 +23,7 @@ import android.widget.ListView;
 import java.util.Collections;
 import java.util.Map;
 
+import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
 import us.bridgeses.minder_tasks.adapters.TasksAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
 import us.bridgeses.minder_tasks.startup.StartupFactory;
@@ -46,8 +47,8 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
         findViewById(R.id.add_button).setOnClickListener(this);
 
-        ListView tasks = (ListView) findViewById(R.id.tasks);
-        tasks.setAdapter(createAdapter(createTestBadStuff()));
+        RecyclerView test_tasks = (RecyclerView) findViewById(R.id.test_tasks);
+        test_tasks.setAdapter(new TaskRecyclerAdapter(this, getCursor(), createTestBadStuff()));
 
         SharedPreferences sp = getSharedPreferences("default",0);
         Map<String, Object> preferences = Collections.unmodifiableMap(sp.getAll());
@@ -63,12 +64,10 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         return badStuff;
     }
 
-    private ListAdapter createAdapter(String[] badStuff) {
-        Cursor c = getContentResolver().query(TasksContract.TasksEntry.TASK_URI,
+    private Cursor getCursor() {
+        return getContentResolver().query(TasksContract.TasksEntry.TASK_URI,
                 new String[] { TasksContract.TasksEntry._ID, TasksContract.TasksEntry.COLUMN_NAME},
                 null, null, null);
-        Log.d("taskActivity", Integer.toString(c.getCount()));
-        return new TasksAdapter(this, c, true, R.layout.default_row, badStuff);
     }
 
     private void startup(Map<String, Object> preferences) {
