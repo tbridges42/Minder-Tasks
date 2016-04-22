@@ -39,6 +39,7 @@ public class TaskEditorFragment extends Fragment {
     }
 
     public static TaskEditorFragment newInstance(Task task) {
+        Log.d("newInstance", task.getName());
         TaskEditorFragment fragment = new TaskEditorFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("task",task);
@@ -52,6 +53,7 @@ public class TaskEditorFragment extends Fragment {
         Bundle args = getArguments();
         if ((args != null) && (!args.isEmpty())) {
             taskBuilder = new Task.Builder((Task) args.getParcelable("task"));
+            Log.d("onCreate", taskBuilder.getName());
         }
         else {
             taskBuilder = new Task.Builder("");
@@ -106,11 +108,13 @@ public class TaskEditorFragment extends Fragment {
                 android.R.layout.simple_spinner_item, android.R.layout.simple_spinner_dropdown_item);
         save.setOnClickListener(new saveListener());
         cancel.setOnClickListener(new cancelListener());
+
+        Log.d("initHandles", taskBuilder.getName());
+        inputTitle.setText(taskBuilder.getName());
+        inputDuration.setText(taskBuilder.getDuration() + "");
         if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
             return;
         }
-        inputTitle.setText(taskBuilder.getName());
-        inputDuration.setText(taskBuilder.getDuration());
         inputTime.setText(savedInstanceState.getString("Time"));
         inputDate.setText(savedInstanceState.getString("Date"));
     }

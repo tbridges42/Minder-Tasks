@@ -6,17 +6,20 @@ import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.test.mock.MockCursor;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -26,7 +29,10 @@ import java.util.Map;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
 import us.bridgeses.minder_tasks.adapters.TasksAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
+import us.bridgeses.minder_tasks.listener.TaskOnClickListener;
+import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.startup.StartupFactory;
+import us.bridgeses.minder_tasks.storage.PersistenceHelper;
 import us.bridgeses.minder_tasks.storage.TasksContract;
 
 // TODO: Create preference class to manage saving and loading preferences
@@ -36,9 +42,10 @@ import us.bridgeses.minder_tasks.storage.TasksContract;
  * status bar and navigation/system bar) with user interaction.
  */
 public class TaskActivity extends FragmentActivity implements View.OnClickListener,
-    TaskEditorFragment.CloseListener {
+    TaskEditorFragment.CloseListener, TaskRecyclerAdapter.TaskListener {
 
-    @Override
+    private RecyclerView.Adapter adapter;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -48,7 +55,9 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.add_button).setOnClickListener(this);
 
         RecyclerView test_tasks = (RecyclerView) findViewById(R.id.test_tasks);
-        test_tasks.setAdapter(new TaskRecyclerAdapter(this, getCursor(), createTestBadStuff()));
+        adapter = new TaskRecyclerAdapter(this, getCursor(), createTestBadStuff(), this);
+        test_tasks.setLayoutManager(new LinearLayoutManager(this));
+        test_tasks.setAdapter(adapter);
 
         SharedPreferences sp = getSharedPreferences("default",0);
         Map<String, Object> preferences = Collections.unmodifiableMap(sp.getAll());
@@ -82,10 +91,11 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        Log.d("OnClick", "Button Clicked");
-        TaskEditorFragment fragment = new TaskEditorFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.contentPanel, fragment,"TAG").addToBackStack("TAG").commit();
+        if (v instanceof FloatingActionButton) {
+            TaskEditorFragment fragment = new TaskEditorFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.add(R.id.contentPanel, fragment, "TAG").addToBackStack("TAG").commit();
+        }
     }
 
     @Override
@@ -101,5 +111,28 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onItemClick(long id, View v) {
+        Log.d("Click", Long.toString(id));
+        editTask(id);
+    }
+
+    public void editTask(long id) {
+        Task task = new PersistenceHelper(this).loadTask(id);
+        TaskEditorFragment fragment = TaskEditorFragment.newInstance(task);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.contentPanel, fragment, "TAG").addToBackStack("TAG").commit();
+    }
+
+    @Override
+    public void onItemLongClick(long id, View v) {
+
+    }
+
+    @Override
+    public void onItemDismiss(long id, View v) {
+
     }
 }
