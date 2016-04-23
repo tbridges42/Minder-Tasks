@@ -2,6 +2,7 @@ package us.bridgeses.minder_tasks.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -102,5 +103,17 @@ public class TaskRecyclerAdapter
         Log.d("TaskRecyclerAdapter", cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME)));
         viewHolder.badStuff.setText(viewHolder.badStuffString);
         viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME)));
+        if (cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1) {
+            // Grey out completed task
+            viewHolder.itemView.setAlpha(0.8f);
+            viewHolder.itemView.setBackgroundColor(Color.GRAY);
+
+        }
+        else {
+            // Ungrey task if not completed
+            viewHolder.itemView.setAlpha(1f);
+            // TODO: How to set this to layout default?
+            viewHolder.itemView.setBackgroundColor(Color.WHITE);
+        }
     }
 }
