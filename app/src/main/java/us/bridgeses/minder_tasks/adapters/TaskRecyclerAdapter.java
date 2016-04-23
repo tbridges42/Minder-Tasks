@@ -37,6 +37,7 @@ public class TaskRecyclerAdapter
             this.itemView = itemView;
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+            itemView.findViewById(R.id.complete).setOnClickListener(this);
             name = (TextView) itemView.findViewById(R.id.task);
             badStuff = (TextView) itemView.findViewById(R.id.bad_stuff);
             this.badStuffString = badStuffString;
@@ -45,7 +46,13 @@ public class TaskRecyclerAdapter
 
         @Override
         public void onClick(View v) {
-            listener.onItemClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
+            if (v.getId() == R.id.complete) {
+                listener.onItemComplete(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()),
+                        itemView);
+            }
+            else {
+                listener.onItemClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
+            }
         }
 
         @Override
@@ -59,6 +66,7 @@ public class TaskRecyclerAdapter
         void onItemClick(long id, View v);
         void onItemLongClick(long id, View v);
         void onItemDismiss(long id, View v);
+        void onItemComplete(long id, View v);
     }
 
     private final Cursor c;
