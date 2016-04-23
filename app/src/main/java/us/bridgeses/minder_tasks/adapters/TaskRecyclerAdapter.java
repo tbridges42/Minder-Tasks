@@ -2,6 +2,7 @@ package us.bridgeses.minder_tasks.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class TaskRecyclerAdapter
             this.itemView = itemView;
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+            itemView.findViewById(R.id.complete).setOnClickListener(this);
             name = (TextView) itemView.findViewById(R.id.task);
             badStuff = (TextView) itemView.findViewById(R.id.bad_stuff);
             this.badStuffString = badStuffString;
@@ -45,7 +47,13 @@ public class TaskRecyclerAdapter
 
         @Override
         public void onClick(View v) {
-            listener.onItemClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
+            if (v.getId() == R.id.complete) {
+                listener.onItemComplete(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()),
+                        itemView);
+            }
+            else {
+                listener.onItemClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
+            }
         }
 
         @Override
@@ -59,6 +67,7 @@ public class TaskRecyclerAdapter
         void onItemClick(long id, View v);
         void onItemLongClick(long id, View v);
         void onItemDismiss(long id, View v);
+        void onItemComplete(long id, View v);
     }
 
     private final Cursor c;
@@ -94,5 +103,17 @@ public class TaskRecyclerAdapter
         Log.d("TaskRecyclerAdapter", cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME)));
         viewHolder.badStuff.setText(viewHolder.badStuffString);
         viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME)));
+        if (cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1) {
+            // Grey out completed task
+            viewHolder.itemView.setAlpha(0.8f);
+            viewHolder.itemView.setBackgroundColor(Color.GRAY);
+
+        }
+        else {
+            // Ungrey task if not completed
+            viewHolder.itemView.setAlpha(1f);
+            // TODO: How to set this to layout default?
+            viewHolder.itemView.setBackgroundColor(Color.WHITE);
+        }
     }
 }

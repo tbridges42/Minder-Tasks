@@ -143,4 +143,10 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
     public void onItemDismiss(long id, View v) {
 
     }
+
+    @Override
+    public void onItemComplete(long id, View v) {
+        PersistenceHelper persistenceHelper = new PersistenceHelper(this);
+        persistenceHelper.recordCompletedTask(id);
+    }
 }
