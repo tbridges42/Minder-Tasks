@@ -19,7 +19,7 @@ import us.bridgeses.minder_tasks.storage.TasksContract;
  */
 public class TaskRecyclerAdapter
         extends CursorRecyclerViewAdapter<TaskRecyclerAdapter.ViewHolder>
-        implements TasksContract {
+        implements TasksContract, Swappable {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
@@ -77,7 +77,6 @@ public class TaskRecyclerAdapter
                                 TaskListener listener) {
         super(context, c);
         this.c = c;
-        Log.d("Cursor Length", Integer.toString(c.getCount()));
         this.badStuff = badStuff;
         this.listener = listener;
     }
