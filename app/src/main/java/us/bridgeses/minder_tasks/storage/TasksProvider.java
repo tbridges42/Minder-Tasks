@@ -105,6 +105,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
                 throw new UnsupportedOperationException("Unknown uri: "
                         + uri);
         }
+        Log.d("query", uri.toString());
         result.setNotificationUri(context.getContentResolver(), uri);
         return result;
     }
@@ -135,6 +136,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
                 throw new UnsupportedOperationException("Unknown uri: "
                         + uri);
         }
+        Log.d("insert", uri.toString());
         context.getContentResolver().notifyChange(uri, null);
         return result;
     }
