@@ -26,6 +26,7 @@ import android.widget.ListView;
 import java.util.Collections;
 import java.util.Map;
 
+import us.bridgeses.minder_tasks.adapters.Swappable;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
 import us.bridgeses.minder_tasks.adapters.TasksAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
@@ -33,7 +34,9 @@ import us.bridgeses.minder_tasks.listener.TaskOnClickListener;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.startup.StartupFactory;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
+import us.bridgeses.minder_tasks.storage.SwappableLoader;
 import us.bridgeses.minder_tasks.storage.TasksContract;
+import us.bridgeses.minder_tasks.storage.TasksLoader;
 
 // TODO: Create preference class to manage saving and loading preferences
 
@@ -55,9 +58,14 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.add_button).setOnClickListener(this);
 
         RecyclerView test_tasks = (RecyclerView) findViewById(R.id.test_tasks);
-        adapter = new TaskRecyclerAdapter(this, getCursor(), createTestBadStuff(), this);
+        adapter = new TaskRecyclerAdapter(this, null, createTestBadStuff(), this);
         test_tasks.setLayoutManager(new LinearLayoutManager(this));
         test_tasks.setAdapter(adapter);
+
+        SwappableLoader loaderHandler = new TasksLoader(this, (Swappable) adapter, -1,
+                TasksContract.TasksEntry.COLUMN_CREATION_TIME, "ASC");
+
+        getLoaderManager().initLoader(SwappableLoader.TASK_LOADER, null, loaderHandler);
 
         SharedPreferences sp = getSharedPreferences("default",0);
         Map<String, Object> preferences = Collections.unmodifiableMap(sp.getAll());

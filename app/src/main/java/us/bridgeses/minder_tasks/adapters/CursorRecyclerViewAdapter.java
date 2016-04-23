@@ -16,17 +16,23 @@ package us.bridgeses.minder_tasks.adapters;
  *
  */
 
+import android.app.Activity;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 /**
  * Created by skyfishjy on 10/31/14.
  */
 
 public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<VH> {
+        extends RecyclerView.Adapter<VH> implements Swappable {
 
     private Context mContext;
 
@@ -45,6 +51,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         mRowIdColumn = mDataValid ? mCursor.getColumnIndex("_id") : -1;
         mDataSetObserver = new NotifyingDataSetObserver();
         if (mCursor != null) {
+            Log.d("cursor","Setting observer");
             mCursor.registerDataSetObserver(mDataSetObserver);
         }
     }
@@ -132,6 +139,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         @Override
         public void onChanged() {
             super.onChanged();
+            Log.d("NotifyingDataSetObs", "Update observed");
             mDataValid = true;
             notifyDataSetChanged();
         }
