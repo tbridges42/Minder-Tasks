@@ -61,4 +61,12 @@ public class PersistenceHelper implements TasksContract {
         cursor.close();
         return task;
     }
+
+    public void recordCompletedTask(long id) {
+        final ContentResolver resolver = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+        values.put(TasksEntry.COLUMN_COMPLETED, 1);
+        resolver.update(TasksEntry.TASK_URI, values, TasksEntry._ID + " = ?",
+                new String[]{ Long.toString(id) });
+    }
 }
