@@ -11,6 +11,8 @@ import us.bridgeses.minder_tasks.adapters.Swappable;
 
 /**
  * Created by Tony on 4/23/2016.
+ *
+ * A concrete SwappableLoader for managing a cursor of Tasks for a Swappable
  */
 public class TasksLoader extends SwappableLoader implements TasksContract.TasksEntry {
 
@@ -37,7 +39,6 @@ public class TasksLoader extends SwappableLoader implements TasksContract.TasksE
         }
         final String sort = COLUMN_COMPLETED + " ASC, " +
                 sortColumn + " " + sortOrder;
-        // TODO: Develop summary projection in TasksEntry
-        return new CursorLoader(context, uri, null, null, null, sort);
+        return new CursorLoader(context, uri, SUMMARY_PROJECTION, select, selectArgs, sort);
     }
 }

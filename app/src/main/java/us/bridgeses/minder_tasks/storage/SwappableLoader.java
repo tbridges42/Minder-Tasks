@@ -14,12 +14,16 @@ import us.bridgeses.minder_tasks.adapters.Swappable;
 
 /**
  * Created by Tony on 4/23/2016.
+ *
+ * An abstract class implementing LoaderCallbacks capable of managing a cursor for any Swappable
  */
 public abstract class SwappableLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final Swappable adapter;
+    // Only store application context to prevent leaks of activities or fragments
     protected final Context context;
 
+    // Does this belong here?
     public static final int TASK_LOADER = 0;
     public static final int CATEGORY_LOADER = 1;
 

@@ -39,7 +39,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
     }
 
     public void setContext(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     public void setDbHelper(DBHelper dbHelper) {

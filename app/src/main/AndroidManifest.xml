@@ -3,6 +3,7 @@
     package="us.bridgeses.minder_tasks" >
 
     <application
+        android:name=".CanaryApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- TODO: Set up permissions and export provider -->
         <provider
+            android:exported="false"
             android:authorities="us.bridgeses.tasks_provider"
             android:name=".storage.TasksProvider" />
     </application>

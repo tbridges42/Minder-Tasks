@@ -3,6 +3,7 @@ package us.bridgeses.minder_tasks.storage;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Helper for creating and updating database.
@@ -14,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
     private static final int DATABASE_VERSION = 1;
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, SCHEMA_VERSION << 16 | DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, packVersions(SCHEMA_VERSION, DATABASE_VERSION));
     }
 
     @Override
@@ -29,5 +30,17 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
         db.execSQL("DROP TABLE " + CATEGORIES_TABLE);
         db.execSQL("DROP TABLE " + TASKS_TABLE);
         onCreate(db);
+    }
+
+    private static int packVersions(int schemaVersion, int databaseVersion) {
+        return schemaVersion << 16 | databaseVersion;
+    }
+
+    private static int getSchemaVersion(int packedVersion) {
+        return packedVersion >> 16;
+    }
+
+    private static int getDatabaseVersion(int packedVersion) {
+        return packedVersion & (1<<16)-1;
     }
 }

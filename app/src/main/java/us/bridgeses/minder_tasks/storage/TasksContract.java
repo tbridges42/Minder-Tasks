@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
  */
 public interface TasksContract {
 
-    int SCHEMA_VERSION = 3;
+    int SCHEMA_VERSION = 4;
 
     String CONTENT_AUTHORITY = "us.bridgeses.tasks_provider";
     Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -47,6 +47,8 @@ public interface TasksContract {
         String COLUMN_DECLARATION = _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_NAME + COLUMN_NAME_TYPE + ", "
                 + COLUMN_COLOR + COLUMN_COLOR_TYPE;
+
+        String[] SUMMARY_PROJECTION = { _ID, COLUMN_NAME, COLUMN_COLOR };
     }
 
     /**
@@ -96,5 +98,7 @@ public interface TasksContract {
                 + COLUMN_COMPLETED + COLUMN_COMPLETED_TYPE + ", "
                 + COLUMN_CATEGORY + COLUMN_CATEGORY_TYPE
                 ;
+
+        String[] SUMMARY_PROJECTION = { _ID, COLUMN_NAME, COLUMN_COMPLETED };
     }
 }

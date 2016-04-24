@@ -17,11 +17,18 @@ import us.bridgeses.minder_tasks.storage.TasksContract;
 
 /**
  * Created by Tony on 4/17/2016.
+ *
+ * This is a concrete @see CursorRecyclerViewAdapter for working with Tasks
  */
+
+// TODO: How can this be generalized?
 public class TaskRecyclerAdapter
         extends CursorRecyclerViewAdapter<TaskRecyclerAdapter.ViewHolder>
         implements TasksContract, Swappable {
 
+    /**
+     * This @see ViewHolder holds the views in the row layout and binds listeners to it
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
 
@@ -63,6 +70,10 @@ public class TaskRecyclerAdapter
         }
     }
 
+    /**
+     * This is a listener interface for receiving view actions
+     */
+    // TODO: Should this be broken out? Cleaned up?
     public interface TaskListener {
         void onItemClick(long id, View v);
         void onItemLongClick(long id, View v);
@@ -70,22 +81,12 @@ public class TaskRecyclerAdapter
         void onItemComplete(long id, View v);
     }
 
-    private final Cursor c;
     private final String[] badStuff;
     private final TaskListener listener;
 
-    @Deprecated
-    public TaskRecyclerAdapter (Context context, Cursor c, String[] badStuff) {
-        super(context, c);
-        this.c = c;
-        this.badStuff = badStuff;
-        listener = null;
-    }
-
-    public TaskRecyclerAdapter (Context context, Cursor c, String[] badStuff,
+    public TaskRecyclerAdapter (Cursor c, String[] badStuff,
                                 TaskListener listener) {
-        super(context, c);
-        this.c = c;
+        super(c);
         this.badStuff = badStuff;
         this.listener = listener;
     }

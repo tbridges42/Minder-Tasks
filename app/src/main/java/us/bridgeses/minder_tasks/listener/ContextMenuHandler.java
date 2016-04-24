@@ -8,24 +8,18 @@ import us.bridgeses.minder_tasks.R;
 
 /**
  * Created by Tony on 4/24/2016.
+ *
+ * A handler to manage the lifecycle of a popupmenu.
  */
 public class ContextMenuHandler implements PopupMenu.OnMenuItemClickListener{
 
     private long id;
-    private final RecyclerMenuListener listener;
-    private final int menuLayout;
+    private RecyclerMenuListener listener;
     private PopupMenu popupMenu;
 
-    public ContextMenuHandler(RecyclerMenuListener listener, int menuLayout) {
+    public ContextMenuHandler(RecyclerMenuListener listener, int menuLayout, long id, View v) {
         this.listener = listener;
-        this.menuLayout = menuLayout;
-    }
-
-    public void create(long id, View v) {
         this.id = id;
-        if (popupMenu != null) {
-            popupMenu.dismiss();
-        }
         popupMenu = new PopupMenu(v.getContext(), v);
         popupMenu.inflate(menuLayout);
         popupMenu.setOnMenuItemClickListener(this);
@@ -37,6 +31,7 @@ public class ContextMenuHandler implements PopupMenu.OnMenuItemClickListener{
             popupMenu.dismiss();
             popupMenu = null;
         }
+        listener = null;
     }
 
     @Override

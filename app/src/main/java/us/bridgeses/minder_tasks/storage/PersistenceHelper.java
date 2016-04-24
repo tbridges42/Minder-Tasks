@@ -11,13 +11,17 @@ import us.bridgeses.minder_tasks.models.Task;
 
 /**
  * Created by Tony on 4/16/2016.
+ *
+ * Helper for persisting and retrieving tasks and categories
  */
+// TODO: break contentvalues -> task -> cursor into separate methods
 public class PersistenceHelper implements TasksContract {
 
+    // Stored context should be Application Context to avoid leaking activities and fragments
     private final Context context;
 
     public PersistenceHelper(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     public long saveTask(Task task) {
@@ -35,6 +39,9 @@ public class PersistenceHelper implements TasksContract {
         values.put(TasksEntry.COLUMN_DUE_TIME, task.getDueTime());
         values.put(TasksEntry.COLUMN_COMPLETED, task.isCompleted());
         Uri uri = resolver.insert(TasksEntry.TASK_URI, values);
+        if (uri == null) {
+            throw new Resources.NotFoundException("Failed to insert task");
+        }
         return Long.parseLong(uri.getLastPathSegment());
     }
 

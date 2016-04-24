@@ -1,28 +1,18 @@
 package us.bridgeses.minder_tasks;
 
-import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.test.mock.MockCursor;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 
 import java.util.Collections;
@@ -30,11 +20,9 @@ import java.util.Map;
 
 import us.bridgeses.minder_tasks.adapters.Swappable;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
-import us.bridgeses.minder_tasks.adapters.TasksAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
 import us.bridgeses.minder_tasks.listener.ContextMenuHandler;
 import us.bridgeses.minder_tasks.listener.RecyclerMenuListener;
-import us.bridgeses.minder_tasks.listener.TaskOnClickListener;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.startup.StartupFactory;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
@@ -65,7 +53,7 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.add_button).setOnClickListener(this);
 
         RecyclerView test_tasks = (RecyclerView) findViewById(R.id.test_tasks);
-        adapter = new TaskRecyclerAdapter(this, null, createTestBadStuff(), this);
+        adapter = new TaskRecyclerAdapter(null, createTestBadStuff(), this);
         test_tasks.setLayoutManager(new LinearLayoutManager(this));
         test_tasks.setAdapter(adapter);
 
@@ -160,10 +148,7 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         if (menuHandler != null) {
             menuHandler.dismiss();
         }
-        else {
-            menuHandler = new ContextMenuHandler(this, R.menu.task_menu);
-        }
-        menuHandler.create(id,v);
+        menuHandler = new ContextMenuHandler(this, R.menu.task_menu, id, v);
     }
 
     @Override

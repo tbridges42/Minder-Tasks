@@ -13,6 +13,8 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by Tony on 12/14/2015.
+ *
+ * Test for category
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "test_us.bridgeses.minder_tasks")
@@ -20,20 +22,20 @@ public class CategoryTest {
 
     @Test
     public void testCreateCategory() {
-        Category testCategory = new Category("Name", Color.RED);
+        Category testCategory = new Category(1L,"Name", Color.RED);
     }
 
     @Test
     public void testGetName() {
         String testName = "Test Name";
-        Category testCategory = new Category(testName, Color.RED);
+        Category testCategory = new Category(1L,testName, Color.RED);
         assertEquals(testName, testCategory.getName());
     }
 
     @Test
     public void testGetColor() {
         int color = Color.GREEN;
-        Category testCategory = new Category("Test Name", color);
+        Category testCategory = new Category(1L, "Test Name", color);
         assertEquals(color, testCategory.getColor());
     }
 }

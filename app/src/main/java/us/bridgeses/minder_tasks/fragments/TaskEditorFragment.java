@@ -20,26 +20,25 @@ import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
 
 /**
- * Allows user to create new tasks
+ * Allows user to create new tasks or edit existing one passed in through newInstance
  */
 public class TaskEditorFragment extends Fragment {
 
-    Task.Builder taskBuilder;
-    EditText inputTitle;
-    EditText inputDuration;
-    Spinner categorySpinner;
-    TextView inputTime;
-    TextView inputDate;
-    Button save;
-    Button cancel;
-    CloseListener callback;
+    private Task.Builder taskBuilder;
+    private EditText inputTitle;
+    private EditText inputDuration;
+    private Spinner categorySpinner;
+    private TextView inputTime;
+    private TextView inputDate;
+    private Button save;
+    private Button cancel;
+    private CloseListener callback;
 
     public interface CloseListener {
         void close();
     }
 
     public static TaskEditorFragment newInstance(Task task) {
-        Log.d("newInstance", task.getName());
         TaskEditorFragment fragment = new TaskEditorFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("task",task);
@@ -84,15 +83,24 @@ public class TaskEditorFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        callback = null;
+        super.onDetach();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.task_editor_layout, container, false);
         setHandles(view);
         initHandles(savedInstanceState);
-        Log.d("onCreateView", "View created");
         return view;
     }
-    
+
+    /**
+     * Initialize all the views that need to be modified
+     * @param view the parent view of the fragment
+     */
     public void setHandles(View view) {
         inputTitle = (EditText) view.findViewById(R.id.input_title);
         inputDuration = (EditText) view.findViewById(R.id.input_duration);
@@ -109,7 +117,6 @@ public class TaskEditorFragment extends Fragment {
         save.setOnClickListener(new saveListener());
         cancel.setOnClickListener(new cancelListener());
 
-        Log.d("initHandles", taskBuilder.getName());
         inputTitle.setText(taskBuilder.getName());
         inputDuration.setText(taskBuilder.getDuration() + "");
         if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
