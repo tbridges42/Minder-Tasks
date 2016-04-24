@@ -58,7 +58,7 @@ public class TaskRecyclerAdapter
 
         @Override
         public boolean onLongClick(View v) {
-            listener.onItemLongClick(getAdapterPosition(), itemView);
+            listener.onItemLongClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
             return true;
         }
     }
