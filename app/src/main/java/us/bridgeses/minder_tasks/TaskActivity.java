@@ -17,11 +17,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.test.mock.MockCursor;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,6 +32,8 @@ import us.bridgeses.minder_tasks.adapters.Swappable;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
 import us.bridgeses.minder_tasks.adapters.TasksAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
+import us.bridgeses.minder_tasks.listener.ContextMenuHandler;
+import us.bridgeses.minder_tasks.listener.RecyclerMenuListener;
 import us.bridgeses.minder_tasks.listener.TaskOnClickListener;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.startup.StartupFactory;
@@ -45,10 +49,13 @@ import us.bridgeses.minder_tasks.storage.TasksLoader;
  * status bar and navigation/system bar) with user interaction.
  */
 public class TaskActivity extends FragmentActivity implements View.OnClickListener,
-    TaskEditorFragment.CloseListener, TaskRecyclerAdapter.TaskListener {
+    TaskEditorFragment.CloseListener, TaskRecyclerAdapter.TaskListener, RecyclerMenuListener {
 
     private RecyclerView.Adapter adapter;
+    private PopupMenu popupMenu;
+    private ContextMenuHandler menuHandler;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -71,6 +78,15 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         Map<String, Object> preferences = Collections.unmodifiableMap(sp.getAll());
         startup(preferences);
         applyStyle(preferences);
+    }
+
+    @Override
+    protected void onStop() {
+        if (popupMenu != null) {
+            popupMenu.dismiss();
+            popupMenu = null;
+        }
+        super.onStop();
     }
 
     private String[] createTestBadStuff() {
@@ -113,6 +129,11 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
+        if (popupMenu != null) {
+            popupMenu.dismiss();
+            popupMenu = null;
+            return;
+        }
         FragmentManager fragmentManager = getFragmentManager();
         if(fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStack();
@@ -136,7 +157,13 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onItemLongClick(long id, View v) {
-
+        if (menuHandler != null) {
+            menuHandler.dismiss();
+        }
+        else {
+            menuHandler = new ContextMenuHandler(this, R.menu.task_menu);
+        }
+        menuHandler.create(id,v);
     }
 
     @Override
@@ -148,5 +175,20 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
     public void onItemComplete(long id, View v) {
         PersistenceHelper persistenceHelper = new PersistenceHelper(this);
         persistenceHelper.recordCompletedTask(id);
+    }
+
+    public void delete(long id) {
+        PersistenceHelper persistenceHelper = new PersistenceHelper(this);
+        persistenceHelper.deleteTask(id);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem, long id) {
+        switch (menuItem.getItemId()) {
+            case R.id.delete: {
+                delete(id);
+            }
+        }
+        return false;
     }
 }

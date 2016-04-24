@@ -69,4 +69,10 @@ public class PersistenceHelper implements TasksContract {
         resolver.update(TasksEntry.TASK_URI, values, TasksEntry._ID + " = ?",
                 new String[]{ Long.toString(id) });
     }
+
+    public void deleteTask(long id) {
+        final ContentResolver resolver = context.getContentResolver();
+        resolver.delete(TasksEntry.TASK_URI, TasksEntry._ID + " = ?",
+                new String[] { Long.toString(id) });
+    }
 }
