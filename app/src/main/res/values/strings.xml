@@ -8,6 +8,7 @@
     <string name="label_input_date">Due Date:</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string-array name="array_input_duration">
         <item>&lt;5 mins</item>
         <item>5 mins</item>

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Basic model of a task. Immutable. Uses the builder pattern to handle multiple optional fields
@@ -152,6 +153,11 @@ public class Task implements Parcelable {
                 throw new IllegalArgumentException("Invalid time");
             }
             this.dueTime = time;
+            return this;
+        }
+
+        public Builder setDueTime(Date time) {
+            this.dueTime = time.getTime();
             return this;
         }
 

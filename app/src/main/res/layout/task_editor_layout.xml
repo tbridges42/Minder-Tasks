@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dateview="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent" android:gravity="center"
     android:background="@android:color/transparent"
@@ -60,25 +61,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_input_time"
                 />
-            <TextView
+            <us.bridgeses.dateview.DateView
                 android:id="@+id/input_time"
+                android:background="@android:color/holo_orange_light"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/none"
                 android:layout_weight="1"
-                />
-            <TextView
-                android:id="@+id/label_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_input_date"
-                />
-            <TextView
-                android:id="@+id/input_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/none"
-                android:layout_weight="1"
+                dateview:dateview_date_format="dateview_long"
+                dateview:dateview_time_format="dateview_short"
                 />
         </LinearLayout>
         <LinearLayout
