@@ -1,7 +1,6 @@
 package us.bridgeses.minder_tasks;
 
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 
 import java.util.Collections;
 import java.util.Map;
@@ -40,7 +38,6 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
     TaskEditorFragment.CloseListener, TaskRecyclerAdapter.TaskListener, RecyclerMenuListener {
 
     private RecyclerView.Adapter adapter;
-    private PopupMenu popupMenu;
     private ContextMenuHandler menuHandler;
 
     @Override
@@ -70,9 +67,9 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     protected void onStop() {
-        if (popupMenu != null) {
-            popupMenu.dismiss();
-            popupMenu = null;
+        if (menuHandler != null) {
+            menuHandler.dismiss();
+            menuHandler = null;
         }
         super.onStop();
     }
@@ -105,24 +102,25 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View v) {
         if (v instanceof FloatingActionButton) {
             TaskEditorFragment fragment = new TaskEditorFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.contentPanel, fragment, "TAG").addToBackStack("TAG").commit();
         }
     }
 
     @Override
     public void close() {
-        getFragmentManager().popBackStack();
+        Log.d("activity", "Close");
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override
     public void onBackPressed() {
-        if (popupMenu != null) {
-            popupMenu.dismiss();
-            popupMenu = null;
+        if (menuHandler != null) {
+            menuHandler.dismiss();
+            menuHandler = null;
             return;
         }
-        FragmentManager fragmentManager = getFragmentManager();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         if(fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStack();
         } else {
@@ -132,14 +130,13 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onItemClick(long id, View v) {
-        Log.d("Click", Long.toString(id));
         editTask(id);
     }
 
     public void editTask(long id) {
         Task task = new PersistenceHelper(this).loadTask(id);
         TaskEditorFragment fragment = TaskEditorFragment.newInstance(task);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.contentPanel, fragment, "TAG").addToBackStack("TAG").commit();
     }
 
