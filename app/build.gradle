@@ -28,13 +28,14 @@ android {
 }
 
 ext {
-    supportLibVersion = '23.3.0'
+    supportLibVersion = '23.4.0'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'us.bridgeses:slideDateTimePicker:1.0.0'
     compile 'us.bridgeses:dateview:1.0.1'
+    compile 'petrov.kristiyan.colorpicker:colorpicker-library:1.1.0'
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:support-v4:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"

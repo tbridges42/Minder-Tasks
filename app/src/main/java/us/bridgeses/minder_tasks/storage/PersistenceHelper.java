@@ -65,6 +65,8 @@ public class PersistenceHelper implements TasksContract {
             throw new Resources.NotFoundException("Task not found");
         }
         cursor.moveToFirst();
+        final Category category =
+                loadCategory(cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_CATEGORY)));
         final String name =
                 cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME));
         final long created_time =
@@ -77,6 +79,7 @@ public class PersistenceHelper implements TasksContract {
                 cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1;
         Task task = new Task.Builder(name)
                 .setId(id)
+                .setCategory(category)
                 .setCreationTime(created_time)
                 .setDueTime(due_time)
                 .setDuration(duration)

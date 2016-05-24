@@ -9,6 +9,11 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="newText">New</string>
+    <string name="label_input_color">Color:</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="new_category">New Category</string>
+    <string name="label_input_name">Name:</string>
     <string-array name="array_input_duration">
         <item>&lt;5 mins</item>
         <item>5 mins</item>

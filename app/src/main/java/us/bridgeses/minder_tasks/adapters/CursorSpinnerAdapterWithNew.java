@@ -87,6 +87,9 @@ public class CursorSpinnerAdapterWithNew extends CursorAdapter implements View.O
                     .inflate(R.layout.category_row, parent, false);
             return v;
         }
+        if (convertView == newRowView) {
+            convertView = null;
+        }
         return super.getView(position, convertView, parent);
     }
 
@@ -98,6 +101,9 @@ public class CursorSpinnerAdapterWithNew extends CursorAdapter implements View.O
                 newRowView = createNewRowView(parent);
             }
             return newRowView;
+        }
+        if (convertView == newRowView) {
+            convertView = null;
         }
         return super.getDropDownView(position, convertView, parent);
     }
@@ -119,5 +125,22 @@ public class CursorSpinnerAdapterWithNew extends CursorAdapter implements View.O
         for (NewListener listener : listeners) {
             listener.createNew();
         }
+    }
+
+    public int getPosition(long id) {
+        int currPos = c.getPosition();
+        int index = 0;
+        c.moveToFirst();
+        do {
+            if (c.getInt(c.getColumnIndex(_ID)) == id) {
+                break;
+            }
+            index++;
+            if (!c.moveToNext()) {
+                index = -1;
+            }
+        } while (true);
+        c.moveToPosition(currPos);
+        return index;
     }
 }

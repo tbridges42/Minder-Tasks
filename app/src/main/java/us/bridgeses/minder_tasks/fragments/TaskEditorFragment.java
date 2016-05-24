@@ -2,7 +2,12 @@ package us.bridgeses.minder_tasks.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,20 +16,26 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.Date;
 
 import us.bridgeses.dateview.DateView;
 import us.bridgeses.minder_tasks.R;
+import us.bridgeses.minder_tasks.adapters.CursorSpinnerAdapterWithNew;
+import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
+import us.bridgeses.minder_tasks.storage.TasksContract;
 import us.bridgeses.slidedatetimepicker.SlideDateTimeListener;
 import us.bridgeses.slidedatetimepicker.SlideDateTimePicker;
 
 /**
  * Allows user to create new tasks or edit existing one passed in through newInstance
  */
-public class TaskEditorFragment extends android.support.v4.app.Fragment {
+public class TaskEditorFragment extends android.support.v4.app.Fragment
+                            implements CursorSpinnerAdapterWithNew.NewListener,
+                            CategoryEditorFragment.SaveListener {
 
     private Task.Builder taskBuilder;
     private EditText inputTitle;
@@ -34,6 +45,34 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment {
     private Button save;
     private Button cancel;
     private CloseListener callback;
+
+    @Override
+    public void createNew() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        CategoryEditorFragment newFragment = CategoryEditorFragment.newInstance(null);
+        newFragment.setListener(this);
+        newFragment.show(ft, "dialog");
+    }
+
+    @Override
+    public void handleSave(long id) {
+        CursorAdapter adapter = (CursorAdapter) categorySpinner.getAdapter();
+        final Cursor newCursor = getContext().getContentResolver().query(TasksContract.CategoryEntry.CATEGORY_URI,
+                new String[] { TasksContract.CategoryEntry._ID,
+                        TasksContract.CategoryEntry.COLUMN_NAME,
+                        TasksContract.CategoryEntry.COLUMN_COLOR },
+                null, null, null);
+        adapter.swapCursor(newCursor);
+        // ID counts from 1, but selection counts from 0
+        categorySpinner.setSelection((int)id - 1);
+    }
 
     public interface CloseListener {
         void close();
@@ -125,14 +164,31 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment {
     }
 
     public void initSpinner(Spinner spinner, int array, int layout, int dropdownLayout) {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                array, layout);
-        adapter.setDropDownViewResource(dropdownLayout);
-        spinner.setAdapter(adapter);
+        CursorAdapter cAdapter = new CursorSpinnerAdapterWithNew(getContext(),
+                getContext().getContentResolver().query(TasksContract.CategoryEntry.CATEGORY_URI,
+                        new String[] { TasksContract.CategoryEntry._ID,
+                                TasksContract.CategoryEntry.COLUMN_NAME,
+                                TasksContract.CategoryEntry.COLUMN_COLOR },
+                        null, null, null),
+                0, R.layout.category_row, R.layout.new_row, this);
+        spinner.setAdapter(cAdapter);
+        if (taskBuilder.getCategory() == null) {
+            spinner.setSelection(0);
+        }
+        else {
+            long id = taskBuilder.getCategory().getId();
+            int position = ((CursorSpinnerAdapterWithNew)spinner.getAdapter()).getPosition(id);
+            spinner.setSelection(position);
+        }
     }
 
     public void save() {
         PersistenceHelper helper = new PersistenceHelper(getActivity());
+        long id = categorySpinner.getSelectedItemId();
+        if (id != Spinner.INVALID_ROW_ID) {
+            final Category category = helper.loadCategory(id);
+            taskBuilder.setCategory(category);
+        }
         taskBuilder.setName(inputTitle.getText().toString());
         helper.saveTask(taskBuilder.build());
         callback.close();
@@ -143,7 +199,6 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment {
     }
 
     public void editDate() {
-        Log.d("taskeditor", "Edit Date");
         SlideDateTimePicker.Builder dateTimePickerBuilder = new SlideDateTimePicker.Builder(
                 getActivity().getSupportFragmentManager()
         );
