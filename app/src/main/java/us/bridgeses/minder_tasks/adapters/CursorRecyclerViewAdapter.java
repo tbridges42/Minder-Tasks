@@ -21,6 +21,8 @@ import android.database.DataSetObserver;
 import android.provider.BaseColumns;
 import android.support.v7.widget.RecyclerView;
 
+import us.bridgeses.minder_tasks.interfaces.Swappable;
+
 /**
  * Modified by Tony on 4/22/16
  *
