@@ -95,6 +95,7 @@ public abstract class CursorAdapterWithNew extends CursorAdapter
     private View createNewRowView(ViewGroup parent) {
         final View v = LayoutInflater.from(mContext).inflate(mNewLayout, parent, false);
         if (mListener != null) {
+            v.setClickable(true);
             v.setOnClickListener(mListener);
         }
         return v;
