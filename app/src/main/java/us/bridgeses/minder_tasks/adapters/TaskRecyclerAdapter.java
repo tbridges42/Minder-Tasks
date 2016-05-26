@@ -123,7 +123,7 @@ public class TaskRecyclerAdapter
             index = INVALID_ID;
         }
         else {
-            index = new Random().nextInt(mTheme.getAllBadStuff().length - 1);
+            index = new Random().nextInt(mTheme.getAllBadStuff().length);
         }
         return new ViewHolder(view, index, listener);
     }
