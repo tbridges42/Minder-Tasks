@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.CursorAdapter;
+import android.widget.Toast;
 
 import us.bridgeses.minder_tasks.interfaces.Swappable;
 import us.bridgeses.minder_tasks.storage.TasksContract;
@@ -74,6 +75,10 @@ public abstract class CursorAdapterWithNew extends CursorAdapter
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        boolean newRow = position == mCursor.getCount();
+        if (newRow) {
+            return mNewRowView;
+        }
         if (convertView == mNewRowView) {
             convertView = null;
         }
@@ -95,7 +100,6 @@ public abstract class CursorAdapterWithNew extends CursorAdapter
     private View createNewRowView(ViewGroup parent) {
         final View v = LayoutInflater.from(mContext).inflate(mNewLayout, parent, false);
         if (mListener != null) {
-            v.setClickable(true);
             v.setOnClickListener(mListener);
         }
         return v;
