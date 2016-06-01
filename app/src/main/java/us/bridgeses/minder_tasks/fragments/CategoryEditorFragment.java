@@ -106,8 +106,7 @@ public class CategoryEditorFragment extends DialogFragment
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
-                })
-                .setTitle("Title");
+                });
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.category_editor_layout, null);
         v.setBackgroundColor(mTheme.getPrimaryColor());
         nameInput = (EditText) v.findViewById(R.id.input_category_name);
