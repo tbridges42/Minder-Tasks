@@ -60,7 +60,7 @@ public class CategoryEditorFragment extends DialogFragment
             return;
         }
         mTheme = theme;
-        // TODO: Apply theme
+        applyTheme();
     }
 
     public interface SaveListener {
