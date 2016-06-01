@@ -152,7 +152,7 @@ public class CategoryEditorFragment extends DialogFragment
         ok.setTextColor(mTheme.getPrimaryFontColor());
     }
 
-    public void save() {
+    private void save() {
         long id = -1;
         if (category != null) {
             id = category.getId();
