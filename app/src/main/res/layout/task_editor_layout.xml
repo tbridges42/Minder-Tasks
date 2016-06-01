@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:padding="0dp"
-        android:background="@android:color/white">
+        android:padding="0dp">
         <EditText
             android:id="@+id/input_title"
             android:hint="@string/hint_input_title"
@@ -72,23 +71,6 @@
                 dateview:dateview_date_format="dateview_long"
                 dateview:dateview_time_format="dateview_short"
                 />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/save"
-                android:text="@string/save"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/cancel"
-                android:text="@string/cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
