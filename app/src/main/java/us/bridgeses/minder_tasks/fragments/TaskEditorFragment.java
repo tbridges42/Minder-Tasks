@@ -1,9 +1,13 @@
 package us.bridgeses.minder_tasks.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +26,8 @@ import java.util.Date;
 
 import us.bridgeses.dateview.DateView;
 import us.bridgeses.minder_tasks.R;
-import us.bridgeses.minder_tasks.adapters.CursorSpinnerAdapterWithNew;
+import us.bridgeses.minder_tasks.adapters.CategorySpinnerAdapter;
+import us.bridgeses.minder_tasks.adapters.CursorAdapterWithNew;
 import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
@@ -33,8 +38,8 @@ import us.bridgeses.slidedatetimepicker.SlideDateTimePicker;
 /**
  * Allows user to create new tasks or edit existing one passed in through newInstance
  */
-public class TaskEditorFragment extends android.support.v4.app.Fragment
-                            implements CursorSpinnerAdapterWithNew.NewListener,
+public class TaskEditorFragment extends DialogFragment
+                            implements View.OnClickListener,
                             CategoryEditorFragment.SaveListener {
 
     private Task.Builder taskBuilder;
@@ -47,7 +52,7 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment
     private CloseListener callback;
 
     @Override
-    public void createNew() {
+    public void onClick(View v) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
@@ -128,13 +133,28 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment
         super.onDetach();
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.task_editor_layout, container, false);
-        setHandles(view);
+    @NonNull
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity())
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        save();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.task_editor_layout, null);
+        setHandles(v);
         initHandles(savedInstanceState);
-        return view;
+        dialogBuilder.setView(v);
+        return dialogBuilder.create();
     }
 
     /**
@@ -146,15 +166,10 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment
         inputDuration = (EditText) view.findViewById(R.id.input_duration);
         categorySpinner = (Spinner) view.findViewById(R.id.input_category);
         inputTime = (DateView) view.findViewById(R.id.input_time);
-        save = (Button) view.findViewById(R.id.save);
-        cancel = (Button) view.findViewById(R.id.cancel);
     }
     
-    public void initHandles(Bundle savedInstanceState) {
-        initSpinner(categorySpinner, R.array.array_input_category_default,
-                android.R.layout.simple_spinner_item, android.R.layout.simple_spinner_dropdown_item);
-        save.setOnClickListener(new saveListener());
-        cancel.setOnClickListener(new cancelListener());
+    private void initHandles(Bundle savedInstanceState) {
+        initSpinner(categorySpinner);
 
         inputTitle.setText(taskBuilder.getName());
         inputDuration.setText(taskBuilder.getDuration() + "");
@@ -163,21 +178,21 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment
         inputTime.setOnClickListener(new dateListener());
     }
 
-    public void initSpinner(Spinner spinner, int array, int layout, int dropdownLayout) {
-        CursorAdapter cAdapter = new CursorSpinnerAdapterWithNew(getContext(),
+    private void initSpinner(Spinner spinner) {
+        CursorAdapter cAdapter = new CategorySpinnerAdapter(getContext(),
                 getContext().getContentResolver().query(TasksContract.CategoryEntry.CATEGORY_URI,
                         new String[] { TasksContract.CategoryEntry._ID,
                                 TasksContract.CategoryEntry.COLUMN_NAME,
                                 TasksContract.CategoryEntry.COLUMN_COLOR },
                         null, null, null),
-                0, R.layout.category_row, R.layout.new_row, this);
+                0, this);
         spinner.setAdapter(cAdapter);
         if (taskBuilder.getCategory() == null) {
             spinner.setSelection(0);
         }
         else {
             long id = taskBuilder.getCategory().getId();
-            int position = ((CursorSpinnerAdapterWithNew)spinner.getAdapter()).getPosition(id);
+            int position = ((CategorySpinnerAdapter)spinner.getAdapter()).getPosition(id);
             spinner.setSelection(position);
         }
     }
@@ -221,7 +236,6 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment
 
         @Override
         public void onClick(View v) {
-            Log.d("taskeditor", "cancel");
             cancel();
         }
     }
@@ -230,7 +244,6 @@ public class TaskEditorFragment extends android.support.v4.app.Fragment
 
         @Override
         public void onClick(View v) {
-            Log.d("taskeditor", "onclick");
             editDate();
         }
     }
