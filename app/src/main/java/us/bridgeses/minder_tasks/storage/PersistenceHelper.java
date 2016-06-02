@@ -15,7 +15,6 @@ import us.bridgeses.minder_tasks.models.Task;
  *
  * Helper for persisting and retrieving tasks and categories
  */
-// TODO: break contentvalues -> task -> cursor into separate methods
 public class PersistenceHelper implements TasksContract {
 
     private final ContentResolver resolver;
