@@ -7,13 +7,14 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
  * Content Provider for returning Tasks and Categories
  */
-// TODO: Try to encapsulate SQL better
+// TODO: Can we set matching at runtime?
 // TODO: Write tests
 public class TasksProvider extends ContentProvider implements TasksContract {
 
@@ -78,33 +79,59 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         }
     }
 
+    private String getTable(Uri uri) {
+        switch (uriMatcher.match(uri)) {
+            case SINGLE_CATEGORY:
+            case MULTIPLE_CATEGORIES:
+                return CATEGORIES_TABLE;
+            case SINGLE_TASK:
+            case MULTIPLE_TASKS:
+                return TASKS_TABLE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: "
+                        + uri);
+        }
+    }
+
+    private boolean isMultiple(Uri uri) {
+        switch (uriMatcher.match(uri)) {
+            case SINGLE_CATEGORY:
+            case SINGLE_TASK:
+                return false;
+            case MULTIPLE_CATEGORIES:
+            case MULTIPLE_TASKS:
+                return true;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: "
+                        + uri);
+        }
+    }
+
+    private Uri getBaseUri(Uri uri) {
+        switch (uriMatcher.match(uri)) {
+            case SINGLE_CATEGORY:
+            case MULTIPLE_CATEGORIES:
+                return CategoryEntry.CATEGORY_URI;
+            case SINGLE_TASK:
+            case MULTIPLE_TASKS:
+                return TasksEntry.TASK_URI;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: "
+                        + uri);
+        }
+    }
+
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection,
                         String selection, String[] selectionArgs,
                         String sortOrder) {
         Cursor result;
         initDb();
-        switch (uriMatcher.match(uri)) {
-            case SINGLE_CATEGORY:
-                selection = CategoryEntry._ID + " = ?";
-                selectionArgs = new String[] { uri.getLastPathSegment() };
-                result = query(CATEGORIES_TABLE, projection, selection, selectionArgs, sortOrder);
-                break;
-            case SINGLE_TASK:
-                selection = TasksEntry._ID + " = ?";
-                selectionArgs = new String[] { uri.getLastPathSegment() };
-                result = query(TASKS_TABLE, projection, selection, selectionArgs, sortOrder);
-                break;
-            case MULTIPLE_CATEGORIES:
-                result = query(CATEGORIES_TABLE, projection, selection, selectionArgs, sortOrder);
-                break;
-            case MULTIPLE_TASKS:
-                result = query(TASKS_TABLE, projection, selection, selectionArgs, sortOrder);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: "
-                        + uri);
+        if (!isMultiple(uri)) {
+            selection = BaseColumns._ID + " = ?";
+            selectionArgs = new String[]{uri.getLastPathSegment()};
         }
+        result = query(getTable(uri), projection, selection, selectionArgs, sortOrder);
         Log.d("query", uri.toString());
         result.setNotificationUri(context.getContentResolver(), uri);
         return result;
@@ -121,21 +148,10 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         Uri result;
         long id;
         initDb();
-        switch (uriMatcher.match(uri)) {
-            case MULTIPLE_CATEGORIES:
-                id = db.insertWithOnConflict(CATEGORIES_TABLE, null, values,
-                        SQLiteDatabase.CONFLICT_REPLACE);
-                result = CategoryEntry.CATEGORY_URI.buildUpon().appendPath(Long.toString(id)).build();
-                break;
-            case MULTIPLE_TASKS:
-                id = db.insertWithOnConflict(TASKS_TABLE, null, values,
-                        SQLiteDatabase.CONFLICT_REPLACE);
-                result = TasksEntry.TASK_URI.buildUpon().appendPath(Long.toString(id)).build();
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: "
-                        + uri);
-        }
+        Uri baseUri = getBaseUri(uri);
+        id = db.insertWithOnConflict(getTable(uri), null, values,
+                SQLiteDatabase.CONFLICT_REPLACE);
+        result = baseUri.buildUpon().appendPath(Long.toString(id)).build();
         Log.d("insert", uri.toString());
         context.getContentResolver().notifyChange(uri, null);
         return result;
@@ -146,27 +162,12 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         initDb();
         int rowsDeleted;
 
-        switch (uriMatcher.match(uri)) {
-            case SINGLE_CATEGORY:
-                selection = CategoryEntry._ID + " = ?";
-                selectionArgs = new String[] { uri.getLastPathSegment() };
-                rowsDeleted = delete(CATEGORIES_TABLE, selection, selectionArgs);
-                break;
-            case SINGLE_TASK:
-                selection = CategoryEntry._ID + " = ?";
-                selectionArgs = new String[] { uri.getLastPathSegment() };
-                rowsDeleted = delete(TASKS_TABLE, selection, selectionArgs);
-                break;
-            case MULTIPLE_CATEGORIES:
-                rowsDeleted = delete(CATEGORIES_TABLE, selection, selectionArgs);
-                break;
-            case MULTIPLE_TASKS:
-                rowsDeleted = delete(TASKS_TABLE, selection, selectionArgs);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: "
-                        + uri);
+        if (!isMultiple(uri)) {
+            selection = CategoryEntry._ID + " = ?";
+            selectionArgs = new String[]{uri.getLastPathSegment()};
         }
+        rowsDeleted = delete(getTable(uri), selection, selectionArgs);
+
         if (rowsDeleted != 0) {
             context.getContentResolver().notifyChange(uri, null);
         }
@@ -182,17 +183,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         initDb();
         int rowsUpdated;
 
-        switch (uriMatcher.match(uri)) {
-            case MULTIPLE_CATEGORIES:
-                rowsUpdated = db.update(CATEGORIES_TABLE, values, selection, selectionArgs);
-                break;
-            case MULTIPLE_TASKS:
-                rowsUpdated = db.update(TASKS_TABLE, values, selection, selectionArgs);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: "
-                        + uri);
-        }
+        rowsUpdated = db.update(getTable(uri), values, selection, selectionArgs);
 
         if (rowsUpdated != 0) {
             context.getContentResolver().notifyChange(uri, null);
