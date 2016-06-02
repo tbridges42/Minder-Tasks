@@ -1,9 +1,9 @@
 package us.bridgeses.minder_tasks;
 
-import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +16,7 @@ import android.view.View;
 import java.util.Collections;
 import java.util.Map;
 
-import us.bridgeses.minder_tasks.adapters.Swappable;
+import us.bridgeses.minder_tasks.interfaces.Swappable;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
 import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
 import us.bridgeses.minder_tasks.listener.ContextMenuHandler;
@@ -35,7 +35,10 @@ import us.bridgeses.minder_tasks.storage.TasksLoader;
  * status bar and navigation/system bar) with user interaction.
  */
 public class TaskActivity extends FragmentActivity implements View.OnClickListener,
-    TaskEditorFragment.CloseListener, TaskRecyclerAdapter.TaskListener, RecyclerMenuListener {
+        TaskRecyclerAdapter.TaskListener, RecyclerMenuListener {
+
+    public static final int TASK_LOADER = 0;
+    public static final int CATEGORY_LOADER = 1;
 
     private RecyclerView.Adapter adapter;
     private ContextMenuHandler menuHandler;
@@ -50,14 +53,14 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.add_button).setOnClickListener(this);
 
         RecyclerView test_tasks = (RecyclerView) findViewById(R.id.test_tasks);
-        adapter = new TaskRecyclerAdapter(null, createTestBadStuff(), this);
+        adapter = new TaskRecyclerAdapter(null, this);
         test_tasks.setLayoutManager(new LinearLayoutManager(this));
         test_tasks.setAdapter(adapter);
 
         SwappableLoader loaderHandler = new TasksLoader(this, (Swappable) adapter, -1,
                 TasksContract.TasksEntry.COLUMN_CREATION_TIME, "ASC");
 
-        getLoaderManager().initLoader(SwappableLoader.TASK_LOADER, null, loaderHandler);
+        getLoaderManager().initLoader(TASK_LOADER, null, loaderHandler);
 
         SharedPreferences sp = getSharedPreferences("default",0);
         Map<String, Object> preferences = Collections.unmodifiableMap(sp.getAll());
@@ -101,16 +104,9 @@ public class TaskActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v instanceof FloatingActionButton) {
-            TaskEditorFragment fragment = new TaskEditorFragment();
-            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.contentPanel, fragment, "TAG").addToBackStack("TAG").commit();
+            DialogFragment newFragment = new TaskEditorFragment();
+            newFragment.show(getSupportFragmentManager(), "dialog");
         }
-    }
-
-    @Override
-    public void close() {
-        Log.d("activity", "Close");
-        getSupportFragmentManager().popBackStack();
     }
 
     @Override
