@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 Tony Bridges
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package us.bridgeses.minder_tasks.models;
 
 import android.os.Parcel;
@@ -10,6 +26,10 @@ import java.util.Date;
  * Basic model of a task. Immutable. Uses the builder pattern to handle multiple optional fields
  */
 public class Task implements Parcelable {
+
+    // To be used to indicate no time. Time is handled in increments of minutes, so a user will
+    // never select a time of one millisecond before epoch.
+    public static final long INVALID_TIME = -1L;
 
     private final long id;
     private final String name;
@@ -46,6 +66,7 @@ public class Task implements Parcelable {
         return duration;
     }
 
+    // Category is immutable. No need for defensive copying
     public Category getCategory() {
         return category;
     }
