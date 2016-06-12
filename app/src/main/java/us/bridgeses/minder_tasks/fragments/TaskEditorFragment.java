@@ -24,7 +24,8 @@ import us.bridgeses.minder_tasks.adapters.CategorySpinnerAdapter;
 import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
-import us.bridgeses.minder_tasks.storage.TasksContract;
+import us.bridgeses.minder_tasks.theme.DefaultTheme;
+import us.bridgeses.minder_tasks.theme.Theme;
 import us.bridgeses.slidedatetimepicker.SlideDateTimeListener;
 import us.bridgeses.slidedatetimepicker.SlideDateTimePicker;
 
@@ -42,6 +43,7 @@ public class TaskEditorFragment extends DialogFragment
     private EditText inputDuration;
     private Spinner categorySpinner;
     private DateView inputTime;
+    private Theme theme = new DefaultTheme();
 
     @Override
     public void onClick(View v) {
@@ -177,6 +179,10 @@ public class TaskEditorFragment extends DialogFragment
         if (taskBuilder.getDueTime() != -1) {
             dateTimePickerBuilder.setInitialDate(new Date(taskBuilder.getDueTime()));
         }
+        dateTimePickerBuilder.setIndicatorColor(theme.getHighlightColor());
+        dateTimePickerBuilder.setTheme(theme.isDark() ?
+                SlideDateTimePicker.HOLO_DARK :
+                SlideDateTimePicker.HOLO_LIGHT);
         dateTimePickerBuilder.build().show();
     }
 
