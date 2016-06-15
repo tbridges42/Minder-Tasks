@@ -167,6 +167,7 @@ public class TaskEditorFragment extends DialogFragment
             final Category category = helper.loadCategory(id);
             taskBuilder.setCategory(category);
         }
+        taskBuilder.setDuration(Integer.parseInt(inputDuration.getText().toString()));
         taskBuilder.setName(inputTitle.getText().toString());
         helper.saveTask(taskBuilder.build());
     }
