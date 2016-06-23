@@ -13,7 +13,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.Date;
@@ -21,11 +20,13 @@ import java.util.Date;
 import us.bridgeses.dateview.DateView;
 import us.bridgeses.minder_tasks.R;
 import us.bridgeses.minder_tasks.adapters.CategorySpinnerAdapter;
+import us.bridgeses.minder_tasks.interfaces.Themeable;
 import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
 import us.bridgeses.minder_tasks.theme.DefaultTheme;
 import us.bridgeses.minder_tasks.theme.Theme;
+import us.bridgeses.minder_tasks.views.ColorEditText;
 import us.bridgeses.slidedatetimepicker.SlideDateTimeListener;
 import us.bridgeses.slidedatetimepicker.SlideDateTimePicker;
 
@@ -34,13 +35,13 @@ import us.bridgeses.slidedatetimepicker.SlideDateTimePicker;
  */
 public class TaskEditorFragment extends DialogFragment
                             implements View.OnClickListener,
-                            CategoryEditorFragment.SaveListener {
+                            CategoryEditorFragment.SaveListener, Themeable {
 
     private static final String CAT_DIALOG_TAG = "cat_dialog_tag";
 
     private Task.Builder taskBuilder;
-    private EditText inputTitle;
-    private EditText inputDuration;
+    private ColorEditText inputTitle;
+    private ColorEditText inputDuration;
     private Spinner categorySpinner;
     private DateView inputTime;
     private Theme theme = new DefaultTheme();
@@ -128,8 +129,8 @@ public class TaskEditorFragment extends DialogFragment
      * @param view the parent view of the fragment
      */
     public void setHandles(View view) {
-        inputTitle = (EditText) view.findViewById(R.id.input_title);
-        inputDuration = (EditText) view.findViewById(R.id.input_duration);
+        inputTitle = (ColorEditText) view.findViewById(R.id.input_title);
+        inputDuration = (ColorEditText) view.findViewById(R.id.input_duration);
         categorySpinner = (Spinner) view.findViewById(R.id.input_category);
         inputTime = (DateView) view.findViewById(R.id.input_time);
     }
@@ -143,6 +144,7 @@ public class TaskEditorFragment extends DialogFragment
         inputTime.setTag("date");
         inputTime.setClickable(true);
         inputTime.setOnClickListener(this);
+        applyTheme(theme);
     }
 
     private void initSpinner(Spinner spinner) {
@@ -158,6 +160,12 @@ public class TaskEditorFragment extends DialogFragment
             int position = ((CategorySpinnerAdapter)spinner.getAdapter()).getPosition(id);
             spinner.setSelection(position);
         }
+    }
+
+    @Override
+    public void applyTheme(Theme theme) {
+        inputTitle.setColor(theme.getHighlightColor());
+        inputDuration.setColor(theme.getHighlightColor());
     }
 
     private void save() {
