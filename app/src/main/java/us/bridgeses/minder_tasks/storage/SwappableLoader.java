@@ -34,10 +34,19 @@ public abstract class SwappableLoader implements LoaderManager.LoaderCallbacks<C
     private final Swappable adapter;
     // Only store application context to prevent leaks of activities or fragments
     protected final Context context;
+    protected String sortColumn;
+    protected boolean ascending;
+    protected String filterColumn;
+    protected String filterValue;
 
-    public SwappableLoader(Context context, Swappable adapter) {
+    public SwappableLoader(Context context, Swappable adapter, String sortColumn,
+                           boolean ascending, String filterColumn, String filterValue) {
         this.context = context.getApplicationContext();
         this.adapter = adapter;
+        this.sortColumn = sortColumn;
+        this.ascending = ascending;
+        this.filterColumn = filterColumn;
+        this.filterValue = filterValue;
     }
 
     @Override
@@ -48,5 +57,13 @@ public abstract class SwappableLoader implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    public void setSortColumn(String sortColumn) {
+        this.sortColumn = sortColumn;
+    }
+
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
     }
 }
