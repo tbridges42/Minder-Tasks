@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:padding="0dp">
-        <EditText
+        android:padding="10dp">
+        <us.bridgeses.minder_tasks.views.ColorEditText
             android:id="@+id/input_title"
             android:hint="@string/hint_input_title"
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_input_duration"
                 />
-            <EditText
+            <us.bridgeses.minder_tasks.views.ColorEditText
                 android:id="@+id/input_duration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -63,7 +63,6 @@
                 />
             <us.bridgeses.dateview.DateView
                 android:id="@+id/input_time"
-                android:background="@android:color/holo_orange_light"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/none"

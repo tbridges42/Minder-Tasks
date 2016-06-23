@@ -26,6 +26,11 @@
         <item>3 hrs</item>
         <item>4+ hrs</item>
     </string-array>
+    <string-array name="array_sort_by">
+        <item>Created</item>
+        <item>Due Date</item>
+        <item>Duration</item>
+    </string-array>
     <string-array name="array_input_category_default">
         <item>No category</item>
     </string-array>
