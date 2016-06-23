@@ -19,6 +19,7 @@ package us.bridgeses.minder_tasks.adapters;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ public class TaskRecyclerAdapter
             View.OnLongClickListener {
 
         public final View itemView;
+        public final View colorView;
         public final TextView name;
         public final TextView badStuff;
         public final int badStuffIndex;
@@ -63,6 +65,7 @@ public class TaskRecyclerAdapter
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
             itemView.findViewById(R.id.complete).setOnClickListener(this);
+            colorView = itemView.findViewById(R.id.cat_color);
             name = (TextView) itemView.findViewById(R.id.task);
             badStuff = (TextView) itemView.findViewById(R.id.bad_stuff);
             this.badStuffIndex = badStuffIndex;
@@ -137,9 +140,12 @@ public class TaskRecyclerAdapter
         else {
             viewHolder.badStuff.setText("");
         }
+        viewHolder.badStuff.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTheme.getSmallTextSize());
         viewHolder.badStuff.setTextColor(mTheme.getPrimaryFontColor());
+        viewHolder.colorView.setBackgroundColor(Color.BLUE);
         viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME)));
         viewHolder.name.setTextColor(mTheme.getPrimaryFontColor());
+        viewHolder.name.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTheme.getTextSize());
         if (cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1) {
             // Grey out completed task
             viewHolder.itemView.setAlpha(0.8f);
