@@ -30,6 +30,7 @@ public abstract class Theme {
     public abstract int getTextSize();
     public abstract int getHeadlineSize();
     public abstract int getSmallTextSize();
+    public abstract boolean isDark();
     public abstract Spanned[] getAllBadStuff();
     public abstract Spanned getBadStuff(int index);
 }
