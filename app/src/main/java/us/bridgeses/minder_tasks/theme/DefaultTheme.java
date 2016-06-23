@@ -18,14 +18,8 @@ package us.bridgeses.minder_tasks.theme;
 
 
 import android.graphics.Color;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.Html;
-import android.text.Spannable;
 import android.text.Spanned;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import us.bridgeses.minder_tasks.R;
 
@@ -40,7 +34,7 @@ public class DefaultTheme extends Theme {
             Html.fromHtml("&#8230;or <i>they</i> win."),
             Html.fromHtml("&#8230;and nobody gets hurt."),
             Html.fromHtml("&#8230;or I'll tell."),
-            Html.fromHtml("&#8230;please?")
+            Html.fromHtml("&#8230;pretty please?")
     };
 
     @Override
@@ -65,22 +59,27 @@ public class DefaultTheme extends Theme {
 
     @Override
     public int getHighlightColor() {
-        return Color.RED;
+        return Color.GREEN;
     }
 
     @Override
     public int getTextSize() {
-        return R.dimen.text_size;
+        return 12;
     }
 
     @Override
     public int getHeadlineSize() {
-        return R.dimen.header_size;
+        return 21;
     }
 
     @Override
     public int getSmallTextSize() {
-        return R.dimen.small_text_size;
+        return 9;
+    }
+
+    @Override
+    public boolean isDark() {
+        return false;
     }
 
     @Override
