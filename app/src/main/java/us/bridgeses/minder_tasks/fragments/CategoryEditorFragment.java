@@ -111,7 +111,8 @@ public class CategoryEditorFragment extends DialogFragment
         v.setBackgroundColor(mTheme.getPrimaryColor());
         nameInput = (EditText) v.findViewById(R.id.input_category_name);
         nameInput.setTextColor(mTheme.getPrimaryFontColor());
-        nameInput.getBackground().setColorFilter(mTheme.getHighlightColor(), PorterDuff.Mode.SRC_IN);
+        nameInput.getBackground()
+                .setColorFilter(mTheme.getHighlightColor(), PorterDuff.Mode.SRC_IN);
         colorBlock = (LinearLayout) v.findViewById(R.id.color_selector_block);
         colorBlock.setOnClickListener(this);
         if (category != null) {
@@ -134,21 +135,20 @@ public class CategoryEditorFragment extends DialogFragment
 
     private void applyTheme() {
         Dialog dialog = getDialog();
-        LinearLayout titleLayout = (LinearLayout) dialog.findViewById(
-                dialog.getContext().getResources()
-                        .getIdentifier("android:id/topPanel", null, null));
-        TextView title = (TextView) dialog.findViewById(
-                dialog.getContext().getResources()
-                        .getIdentifier("android:id/alertTitle", null, null));
-        View bar = dialog.findViewById(dialog.getContext().getResources()
-                .getIdentifier("android:id/titleDivider", null, null));
-        Button ok = (Button) dialog.findViewById(dialog.getContext().getResources()
-                .getIdentifier("android:id/button1", null, null));
+        LinearLayout titleLayout = (LinearLayout) getProtectedView(dialog,"android:id/topPanel");
+        TextView title = (TextView) getProtectedView(dialog, "android:id/alertTitle");
+        View bar = getProtectedView(dialog, "android:id/titleDivider");
+        Button ok = (Button) getProtectedView(dialog, "android:id/button1");
         title.setTextColor(mTheme.getPrimaryFontColor());
-        titleLayout.getBackground().setColorFilter(mTheme.getPrimaryColor(), PorterDuff.Mode.MULTIPLY);
+        titleLayout.getBackground()
+                .setColorFilter(mTheme.getPrimaryColor(), PorterDuff.Mode.MULTIPLY);
         bar.setBackgroundColor(mTheme.getHighlightColor());
-        ok.setBackgroundColor(mTheme.getPrimaryColor());
         ok.setTextColor(mTheme.getPrimaryFontColor());
+    }
+
+    private View getProtectedView(Dialog dialog, String id) {
+        return dialog.findViewById(dialog.getContext().getResources()
+                    .getIdentifier(id, null, null));
     }
 
     private void save() {
