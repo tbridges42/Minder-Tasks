@@ -32,16 +32,17 @@ import us.bridgeses.minder_tasks.interfaces.Swappable;
  */
 public class TasksLoader extends SwappableLoader implements TasksContract.TasksEntry {
 
-    private final String sortColumn;
-    private final int categoryId;
-    private final String sortOrder;
+    private int categoryId;
 
     public TasksLoader(Context context, Swappable adapter, int categoryId, String sortColumn,
-                       String sortOrder) {
-        super(context, adapter);
+                       boolean ascending) {
+        super(context, adapter, sortColumn, ascending, COLUMN_CATEGORY,
+                Integer.toString(categoryId));
         this.categoryId = categoryId;
-        this.sortColumn = sortColumn;
-        this.sortOrder = sortOrder;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
@@ -50,12 +51,12 @@ public class TasksLoader extends SwappableLoader implements TasksContract.TasksE
         String select = null;
         String[] selectArgs = null;
         if (categoryId != -1) {
-            select = "( " + COLUMN_CATEGORY + "= ? )";
-            selectArgs = new String[] {Integer.toString(categoryId)};
+            select = "( " + filterColumn + "= ? )";
+            selectArgs = new String[] {filterValue};
         }
         // Sort first incomplete followed by complete, then selected sort
         final String sort = COLUMN_COMPLETED + " ASC, " +
-                sortColumn + " " + sortOrder;
+                sortColumn + " " + (ascending ? "ASC" : "DESC");
         return new CursorLoader(context, uri, SUMMARY_PROJECTION, select, selectArgs, sort);
     }
 }
