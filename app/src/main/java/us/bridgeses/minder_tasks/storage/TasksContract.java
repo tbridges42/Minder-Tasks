@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
  */
 public interface TasksContract {
 
-    int SCHEMA_VERSION = 5;
+    int SCHEMA_VERSION = 7;
 
     String CONTENT_AUTHORITY = "us.bridgeses.tasks_provider";
     Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -106,7 +106,7 @@ public interface TasksContract {
 
     interface TaskViewEntry extends BaseColumns {
         Uri TASK_URI = BASE_CONTENT_URI.buildUpon()
-                .appendPath(TASKS_TABLE).build();
+                .appendPath(TASKS_VIEW).build();
 
         String CONTENT_TASK =
                 "vnd.android.cursor.item/"
@@ -125,17 +125,19 @@ public interface TasksContract {
         String COLUMN_CREATION_TIME = "task_created";
         String COLUMN_DUE_TIME = "task_due";
         String COLUMN_DURATION = "task_duration";
+        String COLUMN_CATEGORY_ID = "category_id";
         String COLUMN_CATEGORY = "category_name";
         String COLUMN_CATEGORY_COLOR = "category_color";
         String COLUMN_COMPLETED = "task_completed";
 
         String COLUMN_DECLARATION = "AS SELECT "
-                + TASKS_TABLE + "." + TasksEntry._ID + " AS " + COLUMN_TASK_ID + ", "
+                + TASKS_TABLE + "." + TasksEntry._ID + " AS " + _ID + ", "
                 + TASKS_TABLE + "." + TasksEntry.COLUMN_NAME + " AS " + COLUMN_NAME + ", "
                 + TASKS_TABLE + "." + TasksEntry.COLUMN_CREATION_TIME + " AS " + COLUMN_CREATION_TIME + ", "
                 + TASKS_TABLE + "." + TasksEntry.COLUMN_DUE_TIME + " AS " + COLUMN_DUE_TIME + ", "
                 + TASKS_TABLE + "." + TasksEntry.COLUMN_DURATION + " AS " + COLUMN_DURATION + ", "
                 + TASKS_TABLE + "." + TasksEntry.COLUMN_COMPLETED + " AS " + COLUMN_COMPLETED + ", "
+                + CATEGORIES_TABLE + "." + CategoryEntry._ID + " AS " + COLUMN_CATEGORY_ID + ", "
                 + CATEGORIES_TABLE + "." + CategoryEntry.COLUMN_NAME + " AS " + COLUMN_CATEGORY + ", "
                 + CATEGORIES_TABLE + "." + CategoryEntry.COLUMN_COLOR + " AS " + COLUMN_CATEGORY_COLOR
                 + " FROM " + TASKS_TABLE

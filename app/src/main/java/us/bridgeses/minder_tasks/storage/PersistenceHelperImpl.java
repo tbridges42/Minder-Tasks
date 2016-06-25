@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
+
+import java.util.Arrays;
 
 import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.models.Task;
@@ -34,19 +37,21 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
      */
     public Task taskFromCursor(Cursor cursor) {
         final long id =
-                cursor.getLong(cursor.getColumnIndex(TasksEntry._ID));
+                cursor.getLong(cursor.getColumnIndex(TaskViewEntry._ID));
         final Category category =
-                loadCategory(cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_CATEGORY)));
+                new Category(cursor.getLong(cursor.getColumnIndex(TaskViewEntry.COLUMN_CATEGORY_ID)),
+                        cursor.getString(cursor.getColumnIndex(TaskViewEntry.COLUMN_CATEGORY)),
+                        cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_CATEGORY_COLOR)));
         final String name =
-                cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME));
+                cursor.getString(cursor.getColumnIndex(TaskViewEntry.COLUMN_NAME));
         final long created_time =
-                cursor.getLong(cursor.getColumnIndex(TasksEntry.COLUMN_CREATION_TIME));
+                cursor.getLong(cursor.getColumnIndex(TaskViewEntry.COLUMN_CREATION_TIME));
         final int duration =
-                cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_DURATION));
+                cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_DURATION));
         final long due_time =
-                cursor.getLong(cursor.getColumnIndex(TasksEntry.COLUMN_DUE_TIME));
+                cursor.getLong(cursor.getColumnIndex(TaskViewEntry.COLUMN_DUE_TIME));
         final boolean completed =
-                cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1;
+                cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_COMPLETED)) == 1;
         return new Task.Builder(name)
                 .setId(id)
                 .setCategory(category)
@@ -115,19 +120,22 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
 
     @Override
     public Task loadTask(long id) throws Resources.NotFoundException {
-        Uri uri = TasksEntry.TASK_URI.buildUpon().appendPath(Long.toString(id)).build();
+        Uri uri = TaskViewEntry.TASK_URI.buildUpon().appendPath(Long.toString(id)).build();
         final Cursor cursor = getRecords(uri, null, null, null, null);
         if ((cursor == null) || (cursor.getCount() == 0)){
             throw new Resources.NotFoundException("Task not found");
         }
+        Log.d("loadtask", "cursor: " + cursor.getCount());
+        Log.d("loadtask", Arrays.toString(cursor.getColumnNames()));
         cursor.moveToFirst();
+
         Task task = taskFromCursor(cursor);
         cursor.close();
         return task;
     }
 
     private Cursor loadAllTasks() {
-        Uri uri = TasksEntry.TASK_URI;
+        Uri uri = TaskViewEntry.TASK_URI;
         return resolver.query(uri, TasksEntry.SUMMARY_PROJECTION, null, null, null);
     }
 

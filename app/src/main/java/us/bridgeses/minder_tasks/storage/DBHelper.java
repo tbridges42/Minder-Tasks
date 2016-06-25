@@ -39,6 +39,11 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
         if (getSchemaVersion(oldVersion) == 4) {
             db.execSQL("CREATE VIEW " + TASKS_VIEW + " " + TaskViewEntry.COLUMN_DECLARATION + ";");
         }
+        // Schema version 5 contained an error that requires the View to be recreated
+        if (getSchemaVersion(oldVersion) == 5 || getSchemaVersion(oldVersion) == 6) {
+            db.execSQL("DROP VIEW " + TASKS_VIEW);
+            db.execSQL("CREATE VIEW " + TASKS_VIEW + " " + TaskViewEntry.COLUMN_DECLARATION + ";");
+        }
     }
 
     private static int packVersions(int schemaVersion, int databaseVersion) {

@@ -26,6 +26,8 @@ public class TasksProvider extends ContentProvider implements TasksContract {
     private static final int MULTIPLE_TASKS = 101;
     private static final int SINGLE_CATEGORY = 102;
     private static final int MULTIPLE_CATEGORIES = 103;
+    private static final int SINGLE_TASK_VIEW = 104;
+    private static final int MULTIPLE_TASKS_VIEW = 105;
 
     private static final UriMatcher uriMatcher = buildUriMatcher();
 
@@ -34,6 +36,8 @@ public class TasksProvider extends ContentProvider implements TasksContract {
 
         matcher.addURI(CONTENT_AUTHORITY, TASKS_TABLE, MULTIPLE_TASKS);
         matcher.addURI(CONTENT_AUTHORITY, TASKS_TABLE + "/#", SINGLE_TASK);
+        matcher.addURI(CONTENT_AUTHORITY, TASKS_VIEW, MULTIPLE_TASKS_VIEW);
+        matcher.addURI(CONTENT_AUTHORITY, TASKS_VIEW + "/#", SINGLE_TASK_VIEW);
         matcher.addURI(CONTENT_AUTHORITY, CATEGORIES_TABLE, MULTIPLE_CATEGORIES);
         matcher.addURI(CONTENT_AUTHORITY, CATEGORIES_TABLE + "/#", SINGLE_CATEGORY);
         return matcher;
@@ -70,8 +74,10 @@ public class TasksProvider extends ContentProvider implements TasksContract {
             case MULTIPLE_CATEGORIES:
                 return CategoryEntry.CONTENT_CATEGORIES;
             case SINGLE_TASK:
+            case SINGLE_TASK_VIEW:
                 return TasksEntry.CONTENT_TASK;
             case MULTIPLE_TASKS:
+            case MULTIPLE_TASKS_VIEW:
                 return TasksEntry.CONTENT_TASKS;
             default:
                 throw new UnsupportedOperationException("Unknown uri: "
@@ -87,6 +93,9 @@ public class TasksProvider extends ContentProvider implements TasksContract {
             case SINGLE_TASK:
             case MULTIPLE_TASKS:
                 return TASKS_TABLE;
+            case SINGLE_TASK_VIEW:
+            case MULTIPLE_TASKS_VIEW:
+                return TASKS_VIEW;
             default:
                 throw new UnsupportedOperationException("Unknown uri: "
                         + uri);
@@ -97,9 +106,11 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         switch (uriMatcher.match(uri)) {
             case SINGLE_CATEGORY:
             case SINGLE_TASK:
+            case SINGLE_TASK_VIEW:
                 return false;
             case MULTIPLE_CATEGORIES:
             case MULTIPLE_TASKS:
+            case MULTIPLE_TASKS_VIEW:
                 return true;
             default:
                 throw new UnsupportedOperationException("Unknown uri: "
@@ -115,6 +126,9 @@ public class TasksProvider extends ContentProvider implements TasksContract {
             case SINGLE_TASK:
             case MULTIPLE_TASKS:
                 return TasksEntry.TASK_URI;
+            case SINGLE_TASK_VIEW:
+            case MULTIPLE_TASKS_VIEW:
+                return TaskViewEntry.TASK_URI;
             default:
                 throw new UnsupportedOperationException("Unknown uri: "
                         + uri);
@@ -133,6 +147,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         }
         result = query(getTable(uri), projection, selection, selectionArgs, sortOrder);
         Log.d("query", uri.toString());
+        Log.d("query", getTable(uri));
         result.setNotificationUri(context.getContentResolver(), uri);
         return result;
     }
