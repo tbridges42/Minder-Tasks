@@ -21,8 +21,8 @@ import us.bridgeses.minder_tasks.models.Task;
 public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
     private final ContentResolver resolver;
 
-    public PersistenceHelperImpl(Context context) {
-        resolver = context.getContentResolver();
+    public PersistenceHelperImpl(ContentResolver resolver) {
+        this.resolver = resolver;
     }
 
     @Override
