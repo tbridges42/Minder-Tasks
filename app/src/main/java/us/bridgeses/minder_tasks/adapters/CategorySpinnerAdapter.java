@@ -43,8 +43,10 @@ public class CategorySpinnerAdapter extends CursorAdapterWithNew{
     public void bindView(View view, Context context, Cursor cursor) {
         final int color = cursor.getInt(cursor.getColumnIndex(COLUMN_COLOR));
         final String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+
         final LinearLayout colorBlock = (LinearLayout) view.findViewById(R.id.color_block);
         final TextView nameText = (TextView) view.findViewById(R.id.category_name);
+
         colorBlock.setBackgroundColor(color);
         nameText.setText(name);
     }
