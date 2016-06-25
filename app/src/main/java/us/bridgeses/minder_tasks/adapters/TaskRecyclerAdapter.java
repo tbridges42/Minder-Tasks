@@ -75,17 +75,17 @@ public class TaskRecyclerAdapter
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.complete) {
-                listener.onItemComplete(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()),
+                listener.onTaskCompleted(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()),
                         itemView);
             }
             else {
-                listener.onItemClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
+                listener.onTaskSelected(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            listener.onItemLongClick(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
+            listener.onTaskContextRequested(TaskRecyclerAdapter.this.getItemId(getAdapterPosition()), itemView);
             return true;
         }
     }
@@ -93,15 +93,26 @@ public class TaskRecyclerAdapter
     /**
      * This is a listener interface for receiving view actions
      */
-    // TODO: Should this be broken out? Cleaned up?
-    public interface TaskListener {
-        void onItemClick(long id, View v);
-        void onItemLongClick(long id, View v);
-        void onItemDismiss(long id, View v);
-        void onItemComplete(long id, View v);
+    public interface TaskListener extends TaskCompletedListener, TaskSelectedistener,
+                                            TaskDismissedListener, TaskContextListener{}
+
+    public interface TaskSelectedistener {
+        void onTaskSelected(long id, View v);
     }
 
-    private final TaskListener listener;
+    public interface TaskContextListener {
+        void onTaskContextRequested(long id, View v);
+    }
+
+    public interface TaskDismissedListener {
+        void onTaskDismissed(long id, View v);
+    }
+
+    public interface TaskCompletedListener {
+        void onTaskCompleted(long id, View v);
+    }
+
+    private TaskListener listener;
     private Theme mTheme = new DefaultTheme();
 
     public TaskRecyclerAdapter (Cursor c, TaskListener listener) {
@@ -115,6 +126,10 @@ public class TaskRecyclerAdapter
         if (theme != null) {
             mTheme = theme;
         }
+    }
+
+    public void setListener(TaskListener listener) {
+        this.listener = listener;
     }
 
     @Override
