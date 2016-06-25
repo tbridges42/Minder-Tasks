@@ -37,6 +37,7 @@ import us.bridgeses.minder_tasks.R;
 import us.bridgeses.minder_tasks.interfaces.Themeable;
 import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
+import us.bridgeses.minder_tasks.storage.PersistenceHelperImpl;
 import us.bridgeses.minder_tasks.theme.DefaultTheme;
 import us.bridgeses.minder_tasks.theme.Theme;
 
@@ -159,7 +160,7 @@ public class CategoryEditorFragment extends DialogFragment
         Drawable background = colorBlock.getBackground();
         int color = ((ColorDrawable) background).getColor();
         category = new Category(id, nameInput.getText().toString(), color);
-        PersistenceHelper helper = new PersistenceHelper(getContext());
+        PersistenceHelper helper = new PersistenceHelperImpl(getContext());
         id = helper.saveCategory(category);
         if (listener != null) {
             listener.handleSave(id);
