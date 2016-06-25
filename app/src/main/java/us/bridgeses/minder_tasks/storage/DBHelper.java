@@ -22,14 +22,23 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + CATEGORIES_TABLE + " (" + CategoryEntry.COLUMN_DECLARATION + ");");
         db.execSQL("CREATE TABLE " + TASKS_TABLE + " (" + TasksEntry.COLUMN_DECLARATION + ");");
+        db.execSQL("CREATE VIEW " + TASKS_VIEW + " " + TaskViewEntry.COLUMN_DECLARATION + ";");
     }
 
     //TODO: Change this behavior before release!
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE " + CATEGORIES_TABLE);
-        db.execSQL("DROP TABLE " + TASKS_TABLE);
-        onCreate(db);
+        // Schema versions less than 4 are incompatible with newer versions. Delete and recreate
+        // the tables
+        if (getSchemaVersion(oldVersion) < 4) {
+            db.execSQL("DROP TABLE " + CATEGORIES_TABLE);
+            db.execSQL("DROP TABLE " + TASKS_TABLE);
+            onCreate(db);
+        }
+        // Schema version 5 added a combined view
+        if (getSchemaVersion(oldVersion) == 4) {
+            db.execSQL("CREATE VIEW " + TASKS_VIEW + " " + TaskViewEntry.COLUMN_DECLARATION + ";");
+        }
     }
 
     private static int packVersions(int schemaVersion, int databaseVersion) {
