@@ -40,6 +40,10 @@ public class ContextMenuHandler implements PopupMenu.OnMenuItemClickListener{
         popupMenu.show();
     }
 
+    public void setListener(RecyclerMenuListener listener) {
+        this.listener = listener;
+    }
+
     public void dismiss() {
         if (popupMenu != null) {
             popupMenu.dismiss();
