@@ -31,7 +31,7 @@ import us.bridgeses.minder_tasks.interfaces.Swappable;
  */
 public abstract class SwappableLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final Swappable adapter;
+    private Swappable adapter;
     // Only store application context to prevent leaks of activities or fragments
     protected final Context context;
     protected String sortColumn;
@@ -66,4 +66,6 @@ public abstract class SwappableLoader implements LoaderManager.LoaderCallbacks<C
     public void setAscending(boolean ascending) {
         this.ascending = ascending;
     }
+
+    public void setAdapter(Swappable adapter) { this.adapter = adapter; }
 }
