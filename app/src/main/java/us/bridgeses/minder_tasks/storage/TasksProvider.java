@@ -11,6 +11,8 @@ import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.Arrays;
+
 /**
  * Content Provider for returning Tasks and Categories
  */
@@ -145,9 +147,11 @@ public class TasksProvider extends ContentProvider implements TasksContract {
             selection = BaseColumns._ID + " = ?";
             selectionArgs = new String[]{uri.getLastPathSegment()};
         }
-        result = query(getTable(uri), projection, selection, selectionArgs, sortOrder);
         Log.d("query", uri.toString());
         Log.d("query", getTable(uri));
+        Log.d("query", Arrays.toString(projection));
+        Log.d("query", "query() called with: " + "uri = [" + uri + "], projection = [" + projection + "], selection = [" + selection + "], selectionArgs = [" + selectionArgs + "], sortOrder = [" + sortOrder + "]");
+        result = query(getTable(uri), projection, selection, selectionArgs, sortOrder);
         result.setNotificationUri(context.getContentResolver(), uri);
         return result;
     }

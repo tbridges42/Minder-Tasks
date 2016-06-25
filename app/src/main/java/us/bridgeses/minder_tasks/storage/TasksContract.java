@@ -120,7 +120,6 @@ public interface TasksContract {
                         + "/"
                         + TASKS_TABLE;
 
-        String COLUMN_TASK_ID = "task_id";
         String COLUMN_NAME = "task_name";
         String COLUMN_CREATION_TIME = "task_created";
         String COLUMN_DUE_TIME = "task_due";
@@ -144,5 +143,16 @@ public interface TasksContract {
                 + " LEFT JOIN " + CATEGORIES_TABLE + " ON "
                 + TASKS_TABLE + "." + TasksEntry.COLUMN_CATEGORY + " = "
                 + CATEGORIES_TABLE + "." + CategoryEntry._ID;
+
+        String[] SUMMARY_PROJECTION = {
+                _ID,
+                COLUMN_NAME,
+                COLUMN_CREATION_TIME,
+                COLUMN_COMPLETED,
+                COLUMN_DUE_TIME,
+                COLUMN_DURATION,
+                COLUMN_CATEGORY,
+                COLUMN_CATEGORY_COLOR
+        };
     }
 }

@@ -74,7 +74,8 @@ public class TaskEditorFragment extends DialogFragment
     @Override
     public void handleSave(long id) {
         final CursorAdapter adapter = (CursorAdapter) categorySpinner.getAdapter();
-        final Cursor newCursor = new PersistenceHelperImpl(getContext()).loadAllCategories();
+        final Cursor newCursor = new PersistenceHelperImpl(getContext().getContentResolver())
+                .loadAllCategories();
         adapter.swapCursor(newCursor);
         // ID counts from 1, but selection counts from 0
         categorySpinner.setSelection((int)id - 1);
@@ -152,7 +153,7 @@ public class TaskEditorFragment extends DialogFragment
 
     private void initSpinner(Spinner spinner) {
         CursorAdapter cAdapter = new CategorySpinnerAdapter(getContext(),
-                new PersistenceHelperImpl(getContext()).loadAllCategories(),
+                new PersistenceHelperImpl(getContext().getContentResolver()).loadAllCategories(),
                 0, this);
         spinner.setAdapter(cAdapter);
         if (taskBuilder.getCategory() == null) {
@@ -172,7 +173,7 @@ public class TaskEditorFragment extends DialogFragment
     }
 
     private void save() {
-        PersistenceHelper helper = new PersistenceHelperImpl(getActivity());
+        PersistenceHelper helper = new PersistenceHelperImpl(getActivity().getContentResolver());
         long id = categorySpinner.getSelectedItemId();
         if (id != Spinner.INVALID_ROW_ID) {
             final Category category = helper.loadCategory(id);

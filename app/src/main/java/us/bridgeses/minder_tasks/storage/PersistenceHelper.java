@@ -27,8 +27,6 @@ import us.bridgeses.minder_tasks.models.Task;
  * Created by tbrid on 6/24/2016.
  */
 public interface PersistenceHelper {
-    Cursor getRecords(Uri uri, String[] projection, String selection,
-                      String[] selectionArgs, String orderBy);
 
     long saveTask(Task task);
 
@@ -39,6 +37,8 @@ public interface PersistenceHelper {
     Category loadCategory(long id) throws Resources.NotFoundException;
 
     Cursor loadAllCategories();
+
+    Cursor loadTaskSummaries();
 
     void recordCompletedTask(long id);
 

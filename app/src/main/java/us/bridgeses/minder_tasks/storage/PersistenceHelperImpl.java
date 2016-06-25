@@ -25,8 +25,7 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
         this.resolver = resolver;
     }
 
-    @Override
-    public Cursor getRecords(Uri uri, String[] projection, String selection,
+    private Cursor getRecords(Uri uri, String[] projection, String selection,
                              String[] selectionArgs, String orderBy) {
         return resolver.query(uri, projection, selection, selectionArgs, orderBy);
     }
@@ -35,7 +34,7 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
      * Convert a Cursor row to a Task
      * @param cursor the cursor must already be set to the correct row
      */
-    public Task taskFromCursor(Cursor cursor) {
+    private Task taskFromCursor(Cursor cursor) {
         final long id =
                 cursor.getLong(cursor.getColumnIndex(TaskViewEntry._ID));
         final Category category =
@@ -62,7 +61,7 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
                 .build();
     }
 
-    public Category categoryFromCursor(Cursor cursor) {
+    private Category categoryFromCursor(Cursor cursor) {
         final Long id =
                 cursor.getLong(cursor.getColumnIndex(CategoryEntry._ID));
         final String name =
@@ -72,7 +71,7 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
         return new Category(id, name, color);
     }
 
-    public ContentValues cvFromTask(Task task) {
+    private ContentValues cvFromTask(Task task) {
         final ContentValues values = new ContentValues();
         if (task.getId() >= 0) {
             values.put(TasksEntry._ID, task.getId());
@@ -88,7 +87,7 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
         return values;
     }
 
-    public ContentValues cvFromCategory(Category category) {
+    private ContentValues cvFromCategory(Category category) {
         final ContentValues values = new ContentValues();
         if (category.getId() >= 0) {
             values.put(CategoryEntry._ID, category.getId());
@@ -134,11 +133,6 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
         return task;
     }
 
-    private Cursor loadAllTasks() {
-        Uri uri = TaskViewEntry.TASK_URI;
-        return resolver.query(uri, TasksEntry.SUMMARY_PROJECTION, null, null, null);
-    }
-
     @Override
     public Category loadCategory(long id) throws Resources.NotFoundException {
         Uri uri = CategoryEntry.CATEGORY_URI.buildUpon().appendPath(Long.toString(id)).build();
@@ -156,6 +150,12 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
     public Cursor loadAllCategories() {
         Uri uri = CategoryEntry.CATEGORY_URI;
         return getRecords(uri, CategoryEntry.SUMMARY_PROJECTION, null, null, null);
+    }
+
+    @Override
+    public Cursor loadTaskSummaries() {
+        Uri uri = TaskViewEntry.TASK_URI;
+        return getRecords(uri, TaskViewEntry.SUMMARY_PROJECTION, null, null, null);
     }
 
     @Override

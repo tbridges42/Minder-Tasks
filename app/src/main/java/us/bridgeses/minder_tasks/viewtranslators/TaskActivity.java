@@ -113,10 +113,10 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
 
         taskList.setLayoutManager(new LinearLayoutManager(this));
 
-        final PersistenceHelperImpl persistenceHelper = new PersistenceHelperImpl(this);
+        final PersistenceHelperImpl persistenceHelper = new PersistenceHelperImpl(this.getContentResolver());
         final TaskRecyclerAdapter taskAdapter = new TaskRecyclerAdapter(null, null);
         final TasksLoader taskCallback = new TasksLoader(this, taskAdapter, -1,
-                TasksContract.TasksEntry.COLUMN_CREATION_TIME, true);
+                TasksContract.TaskViewEntry.COLUMN_CREATION_TIME, true);
         final LoaderManager loaderManager = getLoaderManager();
         final Theme theme = new DefaultTheme();
 

@@ -157,11 +157,13 @@ public class TaskRecyclerAdapter
         }
         viewHolder.badStuff.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTheme.getSmallTextSize());
         viewHolder.badStuff.setTextColor(mTheme.getPrimaryFontColor());
-        viewHolder.colorView.setBackgroundColor(Color.BLUE);
-        viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TasksEntry.COLUMN_NAME)));
+        viewHolder.colorView
+                .setBackgroundColor(
+                        cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_CATEGORY_COLOR)));
+        viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TaskViewEntry.COLUMN_NAME)));
         viewHolder.name.setTextColor(mTheme.getPrimaryFontColor());
         viewHolder.name.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTheme.getTextSize());
-        if (cursor.getInt(cursor.getColumnIndex(TasksEntry.COLUMN_COMPLETED)) == 1) {
+        if (cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_COMPLETED)) == 1) {
             // Grey out completed task
             viewHolder.itemView.setAlpha(0.8f);
             viewHolder.itemView.setBackgroundColor(Color.GRAY);

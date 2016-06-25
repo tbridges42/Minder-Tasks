@@ -30,7 +30,7 @@ import us.bridgeses.minder_tasks.interfaces.Swappable;
  *
  * A concrete SwappableLoader for managing a cursor of Tasks for a Swappable
  */
-public class TasksLoader extends SwappableLoader implements TasksContract.TasksEntry {
+public class TasksLoader extends SwappableLoader implements TasksContract.TaskViewEntry {
 
     private int categoryId;
 

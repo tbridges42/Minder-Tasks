@@ -160,7 +160,7 @@ public class CategoryEditorFragment extends DialogFragment
         Drawable background = colorBlock.getBackground();
         int color = ((ColorDrawable) background).getColor();
         category = new Category(id, nameInput.getText().toString(), color);
-        PersistenceHelper helper = new PersistenceHelperImpl(getContext());
+        PersistenceHelper helper = new PersistenceHelperImpl(getContext().getContentResolver());
         id = helper.saveCategory(category);
         if (listener != null) {
             listener.handleSave(id);

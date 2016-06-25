@@ -159,13 +159,13 @@ public class TaskListPresenter implements View.OnClickListener,
         // TODO: 6/24/2016 Get rid of hard-coded strings. Should this be here?
         switch (value) {
             case "Created":
-                changeTaskSort(TasksContract.TasksEntry.COLUMN_CREATION_TIME, true);
+                changeTaskSort(TasksContract.TaskViewEntry.COLUMN_CREATION_TIME, true);
                 break;
             case "Due Date":
-                changeTaskSort(TasksContract.TasksEntry.COLUMN_DUE_TIME, true);
+                changeTaskSort(TasksContract.TaskViewEntry.COLUMN_DUE_TIME, true);
                 break;
             case "Duration":
-                changeTaskSort(TasksContract.TasksEntry.COLUMN_DURATION, true);
+                changeTaskSort(TasksContract.TaskViewEntry.COLUMN_DURATION, true);
                 break;
         }
     }
