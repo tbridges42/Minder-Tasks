@@ -24,6 +24,7 @@ import us.bridgeses.minder_tasks.interfaces.Themeable;
 import us.bridgeses.minder_tasks.models.Category;
 import us.bridgeses.minder_tasks.models.Task;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
+import us.bridgeses.minder_tasks.storage.PersistenceHelperImpl;
 import us.bridgeses.minder_tasks.theme.DefaultTheme;
 import us.bridgeses.minder_tasks.theme.Theme;
 import us.bridgeses.minder_tasks.views.ColorEditText;
@@ -73,7 +74,7 @@ public class TaskEditorFragment extends DialogFragment
     @Override
     public void handleSave(long id) {
         final CursorAdapter adapter = (CursorAdapter) categorySpinner.getAdapter();
-        final Cursor newCursor = new PersistenceHelper(getContext()).loadAllCategories();
+        final Cursor newCursor = new PersistenceHelperImpl(getContext()).loadAllCategories();
         adapter.swapCursor(newCursor);
         // ID counts from 1, but selection counts from 0
         categorySpinner.setSelection((int)id - 1);
@@ -81,9 +82,11 @@ public class TaskEditorFragment extends DialogFragment
 
     public static TaskEditorFragment newInstance(Task task) {
         TaskEditorFragment fragment = new TaskEditorFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("task",task);
-        fragment.setArguments(bundle);
+        if (task != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("task", task);
+            fragment.setArguments(bundle);
+        }
         return fragment;
     }
 
@@ -149,7 +152,7 @@ public class TaskEditorFragment extends DialogFragment
 
     private void initSpinner(Spinner spinner) {
         CursorAdapter cAdapter = new CategorySpinnerAdapter(getContext(),
-                new PersistenceHelper(getContext()).loadAllCategories(),
+                new PersistenceHelperImpl(getContext()).loadAllCategories(),
                 0, this);
         spinner.setAdapter(cAdapter);
         if (taskBuilder.getCategory() == null) {
@@ -169,7 +172,7 @@ public class TaskEditorFragment extends DialogFragment
     }
 
     private void save() {
-        PersistenceHelper helper = new PersistenceHelper(getActivity());
+        PersistenceHelper helper = new PersistenceHelperImpl(getActivity());
         long id = categorySpinner.getSelectedItemId();
         if (id != Spinner.INVALID_ROW_ID) {
             final Category category = helper.loadCategory(id);
