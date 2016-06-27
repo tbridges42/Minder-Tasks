@@ -51,6 +51,7 @@ public abstract class SwappableLoader implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d("loader", "Loader finished");
         adapter.swapCursor(data);
     }
 

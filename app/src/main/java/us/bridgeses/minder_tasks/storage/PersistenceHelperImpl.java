@@ -99,12 +99,25 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
 
     @Override
     public long saveTask(Task task) {
+        boolean newTask = task.getId() < 0;
         final ContentValues values = cvFromTask(task);
-        Uri uri = resolver.insert(TasksEntry.TASK_URI, values);
-        if (uri == null) {
-            throw new Resources.NotFoundException("Failed to insert task");
+        if (newTask) {
+            Uri uri = resolver.insert(TasksEntry.TASK_URI, values);
+            if (uri == null) {
+                throw new Resources.NotFoundException("Failed to insert task");
+            }
+            return Long.parseLong(uri.getLastPathSegment());
         }
-        return Long.parseLong(uri.getLastPathSegment());
+        else {
+            int rows = resolver.update(
+                    TasksEntry.TASK_URI.buildUpon().appendPath(Long.toString(task.getId())).build(),
+                    values, null, null);
+            if (rows == 0) {
+                throw new Resources.NotFoundException("Failed to update task");
+            }
+            return task.getId();
+        }
+
     }
 
     @Override
@@ -168,8 +181,8 @@ public class PersistenceHelperImpl implements TasksContract, PersistenceHelper {
 
     @Override
     public void deleteTask(long id) {
-        resolver.delete(TasksEntry.TASK_URI, TasksEntry._ID + " = ?",
-                new String[] { Long.toString(id) });
+        resolver.delete(TasksEntry.TASK_URI.buildUpon().appendPath(Long.toString(id)).build()
+                , null, null);
     }
 
     @Override

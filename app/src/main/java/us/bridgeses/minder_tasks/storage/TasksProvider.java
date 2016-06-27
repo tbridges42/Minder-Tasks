@@ -31,6 +31,10 @@ public class TasksProvider extends ContentProvider implements TasksContract {
     private static final int SINGLE_TASK_VIEW = 104;
     private static final int MULTIPLE_TASKS_VIEW = 105;
 
+    public static final String INSERT = "insert";
+    public static final String UPDATE = "update";
+    public static final String DELETE = "delete";
+
     private static final UriMatcher uriMatcher = buildUriMatcher();
 
     private static UriMatcher buildUriMatcher() {
@@ -137,6 +141,34 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         }
     }
 
+    private Uri buildCallbackUri(Uri uri, String changeType) {
+        Uri returnUri;
+        switch (uriMatcher.match(uri)) {
+            case SINGLE_CATEGORY:
+            case MULTIPLE_CATEGORIES:
+                returnUri = CategoryEntry.CATEGORY_URI;
+                break;
+            case SINGLE_TASK:
+            case SINGLE_TASK_VIEW:
+            case MULTIPLE_TASKS:
+            case MULTIPLE_TASKS_VIEW:
+                returnUri = TasksEntry.TASK_URI;
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: "
+                        + uri);
+        }
+        Uri.Builder builder = returnUri.buildUpon();
+        builder.appendPath(changeType);
+        Log.d("provideruri", uri.toString());
+        if (!isMultiple(uri)) {
+            builder.appendPath(uri.getLastPathSegment());
+        }
+        returnUri = builder.build();
+        Log.d("providerreturn", returnUri.toString());
+        return returnUri;
+    }
+
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection,
                         String selection, String[] selectionArgs,
@@ -147,10 +179,6 @@ public class TasksProvider extends ContentProvider implements TasksContract {
             selection = BaseColumns._ID + " = ?";
             selectionArgs = new String[]{uri.getLastPathSegment()};
         }
-        Log.d("query", uri.toString());
-        Log.d("query", getTable(uri));
-        Log.d("query", Arrays.toString(projection));
-        Log.d("query", "query() called with: " + "uri = [" + uri + "], projection = [" + projection + "], selection = [" + selection + "], selectionArgs = [" + selectionArgs + "], sortOrder = [" + sortOrder + "]");
         result = query(getTable(uri), projection, selection, selectionArgs, sortOrder);
         result.setNotificationUri(context.getContentResolver(), uri);
         return result;
@@ -172,7 +200,7 @@ public class TasksProvider extends ContentProvider implements TasksContract {
                 SQLiteDatabase.CONFLICT_REPLACE);
         result = baseUri.buildUpon().appendPath(Long.toString(id)).build();
         Log.d("insert", uri.toString());
-        context.getContentResolver().notifyChange(uri, null);
+        context.getContentResolver().notifyChange(buildCallbackUri(result, INSERT), null);
         return result;
     }
 
@@ -182,13 +210,14 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         int rowsDeleted;
 
         if (!isMultiple(uri)) {
-            selection = CategoryEntry._ID + " = ?";
+            selection = BaseColumns._ID + " = ?";
             selectionArgs = new String[]{uri.getLastPathSegment()};
         }
         rowsDeleted = delete(getTable(uri), selection, selectionArgs);
 
         if (rowsDeleted != 0) {
-            context.getContentResolver().notifyChange(uri, null);
+            Log.d("provider", buildCallbackUri(uri, DELETE).toString());
+            context.getContentResolver().notifyChange(buildCallbackUri(uri, DELETE), null);
         }
         return rowsDeleted;
     }
@@ -202,12 +231,18 @@ public class TasksProvider extends ContentProvider implements TasksContract {
         initDb();
         int rowsUpdated;
 
+        if (!isMultiple(uri)) {
+            selection = BaseColumns._ID + " = ?";
+            selectionArgs = new String[]{uri.getLastPathSegment()};
+            Log.d("update", selection);
+            Log.d("update", selectionArgs[0]);
+        }
         rowsUpdated = db.update(getTable(uri), values, selection, selectionArgs);
 
         if (rowsUpdated != 0) {
-            context.getContentResolver().notifyChange(uri, null);
+            context.getContentResolver().notifyChange(buildCallbackUri(uri, UPDATE), null);
         }
-        return 0;
+        return rowsUpdated;
     }
 
     private void initDb() {

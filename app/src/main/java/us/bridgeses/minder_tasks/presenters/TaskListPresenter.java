@@ -17,6 +17,9 @@
 package us.bridgeses.minder_tasks.presenters;
 
 import android.app.LoaderManager;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,13 +55,15 @@ public class TaskListPresenter implements View.OnClickListener,
     private LoaderManager loaderManager;
     private TaskRecyclerAdapter taskAdapter;
     private TasksLoader taskCallback;
+    private ContentResolver contentResolver;
 
     public TaskListPresenter(TaskListViewTranslator taskList, PersistenceHelper persistenceHelper,
-                             TaskRecyclerAdapter taskAdapter,
+                             TaskRecyclerAdapter taskAdapter, ContentResolver contentResolver,
                              TasksLoader taskCallback, LoaderManager loaderManager, Theme theme) {
         this.taskList = taskList;
         this.persistenceHelper = persistenceHelper;
         this.taskAdapter = taskAdapter;
+        this.contentResolver = contentResolver;
         this.taskCallback = taskCallback;
         this.loaderManager = loaderManager;
         this.theme = theme;
@@ -73,6 +78,8 @@ public class TaskListPresenter implements View.OnClickListener,
         taskAdapter.setListener(this);
         taskList.setTasksAdapter(taskAdapter);
         loaderManager.initLoader(TASK_LOADER, null, taskCallback);
+        contentResolver.registerContentObserver(TasksContract.TasksEntry.TASK_URI,
+                true, new TaskObserver(new Handler()));
     }
 
     public void tearDown() {
@@ -179,5 +186,22 @@ public class TaskListPresenter implements View.OnClickListener,
         StartupFactory factory = new StartupFactory(preferences);
         // TODO: 6/24/2016 How do we do this without a context?
         //new Handler().post(factory.getStartup(this));
+    }
+
+    private class TaskObserver extends ContentObserver {
+
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        public TaskObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            loaderManager.restartLoader(TASK_LOADER, null, taskCallback);
+        }
     }
 }

@@ -157,21 +157,27 @@ public class TaskRecyclerAdapter
         }
         viewHolder.badStuff.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTheme.getSmallTextSize());
         viewHolder.badStuff.setTextColor(mTheme.getPrimaryFontColor());
-        viewHolder.colorView
-                .setBackgroundColor(
-                        cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_CATEGORY_COLOR)));
-        viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TaskViewEntry.COLUMN_NAME)));
         viewHolder.name.setTextColor(mTheme.getPrimaryFontColor());
         viewHolder.name.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTheme.getTextSize());
-        if (cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_COMPLETED)) == 1) {
-            // Grey out completed task
-            viewHolder.itemView.setAlpha(0.8f);
-            viewHolder.itemView.setBackgroundColor(Color.GRAY);
+
+        if (cursor != null) {
+            viewHolder.itemView.setVisibility(View.VISIBLE);
+            viewHolder.colorView
+                    .setBackgroundColor(
+                            cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_CATEGORY_COLOR)));
+            viewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TaskViewEntry.COLUMN_NAME)));
+            if (cursor.getInt(cursor.getColumnIndex(TaskViewEntry.COLUMN_COMPLETED)) == 1) {
+                // Grey out completed task
+                viewHolder.itemView.setAlpha(0.8f);
+                viewHolder.itemView.setBackgroundColor(Color.GRAY);
+            } else {
+                // Ungrey task if not completed
+                viewHolder.itemView.setAlpha(1f);
+                viewHolder.itemView.setBackgroundColor(mTheme.getPrimaryColor());
+            }
         }
         else {
-            // Ungrey task if not completed
-            viewHolder.itemView.setAlpha(1f);
-            viewHolder.itemView.setBackgroundColor(mTheme.getPrimaryColor());
+            viewHolder.itemView.setVisibility(View.GONE);
         }
     }
 }

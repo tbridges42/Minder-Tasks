@@ -25,6 +25,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -110,7 +111,7 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
         newButton = (FloatingActionButton) findViewById(R.id.add_button);
         sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
         taskList = (RecyclerView) findViewById(R.id.test_tasks);
-
+        taskList.setItemAnimator(new DefaultItemAnimator());
         taskList.setLayoutManager(new LinearLayoutManager(this));
 
         final PersistenceHelperImpl persistenceHelper = new PersistenceHelperImpl(this.getContentResolver());
@@ -120,9 +121,13 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
         final LoaderManager loaderManager = getLoaderManager();
         final Theme theme = new DefaultTheme();
 
+        getContentResolver().registerContentObserver(TasksContract.TasksEntry.TASK_URI, true,
+                taskAdapter.getContentObserver());
+
         presenter = new TaskListPresenter(this,
                 persistenceHelper,
                 taskAdapter,
+                getContentResolver(),
                 taskCallback,
                 loaderManager,
                 theme);

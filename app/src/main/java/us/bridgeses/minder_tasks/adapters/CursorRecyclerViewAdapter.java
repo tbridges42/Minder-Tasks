@@ -16,12 +16,20 @@
 
 package us.bridgeses.minder_tasks.adapters;
 
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.net.Uri;
+import android.os.Handler;
 import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+
+import java.util.List;
 
 import us.bridgeses.minder_tasks.interfaces.Swappable;
+import us.bridgeses.minder_tasks.storage.TasksProvider;
 
 /**
  * Modified by Tony on 4/22/16
@@ -39,15 +47,19 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
     private int mRowIdColumn;
 
-    private DataSetObserver mDataSetObserver;
+    private int mCount;
+
+    private ContentObserver mContentObserver;
 
     public CursorRecyclerViewAdapter(Cursor cursor) {
         mCursor = cursor;
         mDataValid = cursor != null;
         mRowIdColumn = mDataValid ? mCursor.getColumnIndex(BaseColumns._ID) : -1;
-        mDataSetObserver = new NotifyingDataSetObserver();
+        mContentObserver = new NotifyingContentObserver(new Handler());
+        setHasStableIds(true);
         if (mCursor != null) {
-            mCursor.registerDataSetObserver(mDataSetObserver);
+            mCursor.registerContentObserver(mContentObserver);
+            mCount= mCursor.getCount();
         }
     }
 
@@ -58,7 +70,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         if (mDataValid && mCursor != null) {
-            return mCursor.getCount();
+            return mCount;
         }
         return 0;
     }
@@ -87,9 +99,11 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             index++;
             if (!mCursor.moveToNext()) {
                 index = INVALID_ID;
+                break;
             }
         } while (true);
         mCursor.moveToPosition(currPos);
+        Log.d("getpos", Integer.toString(index));
         return index;
     }
 
@@ -113,9 +127,11 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             throw new IllegalStateException("this should only be called when the cursor is valid");
         }
         if (!mCursor.moveToPosition(position)) {
-            throw new IllegalStateException("couldn't move cursor to position " + position);
+            onBindViewHolder(viewHolder, null);
         }
-        onBindViewHolder(viewHolder, mCursor);
+        else {
+            onBindViewHolder(viewHolder, mCursor);
+        }
     }
 
     /**
@@ -135,28 +151,34 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
+        Log.d("swapping", "new cursor");
         if (newCursor == mCursor) {
             return null;
         }
         final Cursor oldCursor = mCursor;
-        if (oldCursor != null && mDataSetObserver != null) {
-            oldCursor.unregisterDataSetObserver(mDataSetObserver);
+        if (oldCursor != null && mContentObserver != null) {
+            oldCursor.unregisterContentObserver(mContentObserver);
         }
         mCursor = newCursor;
         if (mCursor != null) {
-            if (mDataSetObserver != null) {
-                mCursor.registerDataSetObserver(mDataSetObserver);
+            if (mContentObserver != null) {
+                mCursor.registerContentObserver(mContentObserver);
             }
             mRowIdColumn = newCursor.getColumnIndexOrThrow(BaseColumns._ID);
             mDataValid = true;
+            mCount = mCursor.getCount();
             notifyDataSetChanged();
         } else {
             mRowIdColumn = -1;
             mDataValid = false;
-            notifyDataSetChanged();
+            mCount = 0;
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
         return oldCursor;
+    }
+
+    public ContentObserver getContentObserver() {
+        return mContentObserver;
     }
 
     private class NotifyingDataSetObserver extends DataSetObserver {
@@ -173,6 +195,62 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             mDataValid = false;
             notifyDataSetChanged();
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
+        }
+    }
+
+    private class NotifyingContentObserver extends ContentObserver {
+
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        public NotifyingContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            mDataValid = true;
+            List<String> sections = null;
+            if (uri != null) {
+                sections = uri.getPathSegments();
+                Log.d("passeduri", uri.toString());
+                Log.d("passedparts", sections.toString());
+                Log.d("passedcount", Integer.toString(sections.size()));
+            }
+            if (sections != null && sections.size() == 3) {
+                int pos = getPosition(Integer.parseInt(sections.get(sections.size() - 1)));
+                Log.d("pos", Integer.toString(pos));
+                switch (sections.get(1)) {
+                    case TasksProvider.UPDATE:
+                        notifyItemChanged(
+                                pos
+                        );
+                        break;
+                    case TasksProvider.DELETE:
+                        notifyItemRemoved(
+                                pos
+                        );
+                        notifyItemRangeChanged(pos, getItemCount() - pos - 1);
+                        break;
+                    case TasksProvider.INSERT:
+                        notifyItemInserted(
+                                getItemCount()
+                        );
+                        mCount++;
+                        break;
+                    default:
+                        onChange(selfChange);
+                }
+            }
+            else {
+                onChange(selfChange);
+            }
         }
     }
 }
