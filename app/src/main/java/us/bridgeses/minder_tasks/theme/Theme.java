@@ -22,6 +22,7 @@ import android.text.Spanned;
  * An interface for a theme that will provide all customizable resources.
  */
 public abstract class Theme {
+    public abstract String getName();
     public abstract int getLogo();
     public abstract int getPrimaryFontColor();
     public abstract int getHighlightFontColor();

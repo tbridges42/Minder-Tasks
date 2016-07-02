@@ -38,6 +38,11 @@ public class DefaultTheme extends Theme {
     };
 
     @Override
+    public String getName() {
+        return "default";
+    }
+
+    @Override
     public int getLogo() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
