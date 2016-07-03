@@ -25,7 +25,6 @@ public class DBHelper extends SQLiteOpenHelper implements TasksContract {
         db.execSQL("CREATE VIEW " + TASKS_VIEW + " " + TaskViewEntry.COLUMN_DECLARATION + ";");
     }
 
-    //TODO: Change this behavior before release!
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Schema versions less than 4 are incompatible with newer versions. Delete and recreate
