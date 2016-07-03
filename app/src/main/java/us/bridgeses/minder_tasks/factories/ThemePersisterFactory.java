@@ -21,10 +21,12 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 
-import java.io.FileOutputStream;
+import java.io.File;
 
 import us.bridgeses.minder_tasks.interfaces.ThemePersister;
-import us.bridgeses.minder_tasks.storage.FileWriter;
+import us.bridgeses.minder_tasks.interfaces.ThemeStreamWriter;
+import us.bridgeses.minder_tasks.storage.ThemePersisterImpl;
+import us.bridgeses.minder_tasks.storage.ThemeStreamWriterImpl;
 import us.bridgeses.minder_tasks.storage.GsonThemeParser;
 
 /**
@@ -38,11 +40,16 @@ public class ThemePersisterFactory {
         this.context = context;
     }
 
-    private ThemePersister getFileWriter() {
-        return new FileWriter(new GsonThemeParser(new Gson()), context.getFilesDir());
+    private ThemeStreamWriter getFileWriter() {
+        return new ThemeStreamWriterImpl(new GsonThemeParser(new Gson()));
+    }
+
+    private ThemePersister getPersister(ThemeStreamWriter writer) {
+        File dir = context.getFilesDir();
+        return new ThemePersisterImpl(writer, dir);
     }
 
     public ThemePersister getThemePersister(@Nullable String location, @Nullable String type) {
-        return getFileWriter();
+        return getPersister(getFileWriter());
     }
 }

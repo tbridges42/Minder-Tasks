@@ -17,25 +17,25 @@
 package us.bridgeses.minder_tasks.storage;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import us.bridgeses.minder_tasks.interfaces.ThemeParser;
 import us.bridgeses.minder_tasks.interfaces.ThemePersister;
+import us.bridgeses.minder_tasks.interfaces.ThemeStreamWriter;
 import us.bridgeses.minder_tasks.theme.Theme;
 
 /**
  * Created by tbrid on 6/28/2016.
  */
-public class FileWriter implements ThemePersister {
+public class ThemeStreamWriterImpl implements ThemeStreamWriter {
 
     private final ThemeParser parser;
-    private final File dir;
 
-    public FileWriter(ThemeParser parser, File dir) {
+    public ThemeStreamWriterImpl(ThemeParser parser) {
         this.parser = parser;
-        this.dir = dir;
     }
 
     public String getEncoding() {
@@ -43,32 +43,18 @@ public class FileWriter implements ThemePersister {
     }
 
     @Override
-    public Theme read(String name) {
-        File file = new File(dir, name);
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
-            byte[] bytes = new byte[(int) file.length()];
-            inputStream.read(bytes);
-            String result;
-            result = new String(bytes, getEncoding());
-            return parser.parseTheme(result);
+    public Theme read(InputStream inputStream, int length) throws IOException {
+        final byte[] bytes = new byte[length];
+        final int actualLength = inputStream.read(bytes);
+        final String result = new String(bytes, getEncoding());
+        if (actualLength != length) {
+            throw new IOException("Failed to read from stream");
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return parser.parseTheme(result);
     }
 
     @Override
-    public void write(Theme theme) {
-        String name = theme.getName();
-        try {
-            File file = new File(dir, name);
-            FileOutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(parser.encodeTheme(theme).getBytes(getEncoding()));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void write(Theme theme, OutputStream outputStream) throws IOException {
+        outputStream.write(parser.encodeTheme(theme).getBytes(getEncoding()));
     }
 }

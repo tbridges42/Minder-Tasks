@@ -16,24 +16,18 @@
 
 package us.bridgeses.minder_tasks.interfaces;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import us.bridgeses.minder_tasks.theme.Theme;
 
 /**
- * Created by tbrid on 6/28/2016.
+ * Created by tbrid on 7/2/2016.
  */
-public interface ThemePersister {
+public interface ThemeStreamWriter {
 
-    static final String EXTENSION = ".theme";
+    Theme read(InputStream inputStream, int length) throws IOException;
 
-    Theme read(String name) throws IOException;
-
-    void write(Theme theme) throws IOException;
-
-    List<String> getThemeNames();
+    void write(Theme theme, OutputStream outputStream) throws IOException;
 }
