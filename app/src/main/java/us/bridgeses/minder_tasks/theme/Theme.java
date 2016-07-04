@@ -23,10 +23,14 @@ import android.text.Spanned;
  */
 public abstract class Theme {
     public abstract String getName();
+    public abstract String getTitle();
+    public abstract String getCaption();
     public abstract int getLogo();
     public abstract int getPrimaryFontColor();
     public abstract int getHighlightFontColor();
+    public abstract int getBackgroundColor();
     public abstract int getPrimaryColor();
+    public abstract int getSecondaryColor();
     public abstract int getHighlightColor();
     public abstract int getTextSize();
     public abstract int getHeadlineSize();

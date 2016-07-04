@@ -43,6 +43,16 @@ public class DefaultTheme extends Theme {
     }
 
     @Override
+    public String getTitle() {
+        return "Minder Tasks";
+    }
+
+    @Override
+    public String getCaption() {
+        return "";
+    }
+
+    @Override
     public int getLogo() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
@@ -58,13 +68,23 @@ public class DefaultTheme extends Theme {
     }
 
     @Override
+    public int getBackgroundColor() {
+        return Color.parseColor("#F5F5F5");
+    }
+
+    @Override
     public int getPrimaryColor() {
-        return Color.WHITE;
+        return Color.parseColor("#9C27B0");
+    }
+
+    @Override
+    public int getSecondaryColor() {
+        return Color.parseColor("#BA68C8");
     }
 
     @Override
     public int getHighlightColor() {
-        return Color.GREEN;
+        return Color.parseColor("#00BFA5");
     }
 
     @Override

@@ -26,10 +26,14 @@ import android.text.SpannedString;
 public class GsonTheme extends Theme {
 
     private String name;
+    private String title;
+    private String caption;
     private int logoRes;
     private int primaryFontColor;
     private int highlightFontColor;
     private int primaryColor;
+    private int backgroundColor;
+    private int secondaryColor;
     private int highlightColor;
     private int textSize;
     private int headlineSize;
@@ -56,6 +60,16 @@ public class GsonTheme extends Theme {
     }
 
     @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public String getCaption() {
+        return caption;
+    }
+
+    @Override
     public int getLogo() {
         return logoRes;
     }
@@ -68,8 +82,18 @@ public class GsonTheme extends Theme {
         return highlightFontColor;
     }
 
+    @Override
+    public int getBackgroundColor() {
+        return backgroundColor;
+    }
+
     public int getPrimaryColor() {
         return primaryColor;
+    }
+
+    @Override
+    public int getSecondaryColor() {
+        return secondaryColor;
     }
 
     public int getHighlightColor() {
