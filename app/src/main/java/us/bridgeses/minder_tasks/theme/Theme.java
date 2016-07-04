@@ -16,12 +16,13 @@
 
 package us.bridgeses.minder_tasks.theme;
 
+import android.os.Parcelable;
 import android.text.Spanned;
 
 /**
  * An interface for a theme that will provide all customizable resources.
  */
-public abstract class Theme {
+public abstract class Theme implements Parcelable {
     public abstract String getName();
     public abstract String getTitle();
     public abstract String getCaption();

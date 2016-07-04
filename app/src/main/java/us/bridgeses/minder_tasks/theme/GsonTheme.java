@@ -16,9 +16,13 @@
 
 package us.bridgeses.minder_tasks.theme;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
+
+import com.google.gson.Gson;
 
 /**
  * Created by tbrid on 6/28/2016.
@@ -168,5 +172,61 @@ public class GsonTheme extends Theme {
 
     public void setBadStuff(String[] badStuff) {
         this.badStuff = badStuff;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(title);
+        dest.writeString(caption);
+        dest.writeInt(logoRes);
+        dest.writeInt(primaryFontColor);
+        dest.writeInt(highlightFontColor);
+        dest.writeInt(primaryColor);
+        dest.writeInt(backgroundColor);
+        dest.writeInt(secondaryColor);
+        dest.writeInt(highlightColor);
+        dest.writeInt(textSize);
+        dest.writeInt(headlineSize);
+        dest.writeInt(smallTextSize);
+        dest.writeInt(isDark ? 1 : 0);
+        dest.writeInt(badStuff.length);
+        dest.writeStringArray(badStuff);
+    }
+
+    public static final Parcelable.Creator<GsonTheme> CREATOR
+            = new Parcelable.Creator<GsonTheme>() {
+        public GsonTheme createFromParcel(Parcel in) {
+            return new GsonTheme(in);
+        }
+
+        public GsonTheme[] newArray(int size) {
+            return new GsonTheme[size];
+        }
+    };
+    
+    public GsonTheme() {}
+    
+    private GsonTheme(Parcel in) {
+        name = in.readString();
+        title = in.readString();
+        caption = in.readString();
+        logoRes = in.readInt();
+        primaryFontColor = in.readInt();
+        highlightFontColor = in.readInt();
+        primaryColor = in.readInt();
+        backgroundColor = in.readInt();
+        secondaryColor = in.readInt();
+        highlightColor = in.readInt();
+        textSize = in.readInt();
+        headlineSize = in.readInt();
+        smallTextSize = in.readInt();
+        isDark = in.readInt() == 1;
+        in.readStringArray(badStuff);
     }
 }

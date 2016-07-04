@@ -18,6 +18,8 @@ package us.bridgeses.minder_tasks.theme;
 
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -119,4 +121,26 @@ public class DefaultTheme extends Theme {
         }
         return null;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // The values of DefaultTheme never change from original intialization. There is no need
+        // to persist data
+    }
+
+    public static final Parcelable.Creator<DefaultTheme> CREATOR
+            = new Parcelable.Creator<DefaultTheme>() {
+        public DefaultTheme createFromParcel(Parcel in) {
+            return new DefaultTheme();
+        }
+
+        public DefaultTheme[] newArray(int size) {
+            return new DefaultTheme[size];
+        }
+    };
 }

@@ -17,6 +17,8 @@
 package us.bridgeses.minder_tasks.theme;
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by tbrid on 7/3/2016.
@@ -37,4 +39,15 @@ public class DarkDefaultTheme extends DefaultTheme {
     public int getPrimaryFontColor() {
         return Color.parseColor("#F5F5F5");
     }
+
+    public static final Parcelable.Creator<DarkDefaultTheme> CREATOR
+            = new Parcelable.Creator<DarkDefaultTheme>() {
+        public DarkDefaultTheme createFromParcel(Parcel in) {
+            return new DarkDefaultTheme();
+        }
+
+        public DarkDefaultTheme[] newArray(int size) {
+            return new DarkDefaultTheme[size];
+        }
+    };
 }
