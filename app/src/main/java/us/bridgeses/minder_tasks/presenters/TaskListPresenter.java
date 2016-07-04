@@ -117,6 +117,7 @@ public class TaskListPresenter implements View.OnClickListener,
             task = persistenceHelper.loadTask(id);
         }
         TaskEditorFragment fragment = TaskEditorFragment.newInstance(task);
+        fragment.applyTheme(theme);
         taskList.displayFragment(fragment);
     }
 
