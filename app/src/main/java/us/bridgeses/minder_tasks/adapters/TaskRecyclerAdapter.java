@@ -173,7 +173,7 @@ public class TaskRecyclerAdapter
             } else {
                 // Ungrey task if not completed
                 viewHolder.itemView.setAlpha(1f);
-                viewHolder.itemView.setBackgroundColor(mTheme.getPrimaryColor());
+                viewHolder.itemView.setBackgroundColor(mTheme.getBackgroundColor());
             }
         }
         else {
