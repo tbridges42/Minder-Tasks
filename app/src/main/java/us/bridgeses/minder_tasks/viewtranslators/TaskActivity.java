@@ -28,9 +28,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.Map;
 
@@ -44,6 +47,7 @@ import us.bridgeses.minder_tasks.startup.StartupFactory;
 import us.bridgeses.minder_tasks.storage.PersistenceHelperImpl;
 import us.bridgeses.minder_tasks.storage.TasksContract;
 import us.bridgeses.minder_tasks.storage.TasksLoader;
+import us.bridgeses.minder_tasks.theme.DarkDefaultTheme;
 import us.bridgeses.minder_tasks.theme.DefaultTheme;
 import us.bridgeses.minder_tasks.theme.Theme;
 
@@ -55,6 +59,11 @@ import us.bridgeses.minder_tasks.theme.Theme;
  */
 public class TaskActivity extends FragmentActivity implements TaskListViewTranslator {
 
+    private View mainFrame;
+    private View header;
+    private ImageView logo;
+    private TextView title;
+    private TextView caption;
     private ContextMenuHandler menuHandler;
     private FloatingActionButton newButton;
     private RecyclerView taskList;
@@ -108,18 +117,23 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
 
         setContentView(R.layout.default_layout);
 
+        mainFrame = findViewById(R.id.contentPanel);
+        header = findViewById(R.id.header);
+        title = (TextView) findViewById(R.id.title_bar);
+        caption = (TextView) findViewById(R.id.title_caption);
+        logo = (ImageView) findViewById(R.id.logo);
         newButton = (FloatingActionButton) findViewById(R.id.add_button);
         sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
         taskList = (RecyclerView) findViewById(R.id.test_tasks);
         taskList.setItemAnimator(new DefaultItemAnimator());
         taskList.setLayoutManager(new LinearLayoutManager(this));
 
+        final Theme theme = new DarkDefaultTheme();
         final PersistenceHelperImpl persistenceHelper = new PersistenceHelperImpl(this.getContentResolver());
-        final TaskRecyclerAdapter taskAdapter = new TaskRecyclerAdapter(null, null);
+        final TaskRecyclerAdapter taskAdapter = new TaskRecyclerAdapter(null, null, theme);
         final TasksLoader taskCallback = new TasksLoader(this, taskAdapter, -1,
                 TasksContract.TaskViewEntry.COLUMN_CREATION_TIME, true);
         final LoaderManager loaderManager = getLoaderManager();
-        final Theme theme = new DefaultTheme();
 
         getContentResolver().registerContentObserver(TasksContract.TasksEntry.TASK_URI, true,
                 taskAdapter.getContentObserver());
@@ -169,6 +183,15 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
 
     @Override
     public void applyTheme(@NonNull Theme theme) {
+        mainFrame.setBackgroundColor(theme.getBackgroundColor());
+        header.setBackgroundColor(theme.getPrimaryColor());
         newButton.setBackgroundTintList(ColorStateList.valueOf(theme.getHighlightColor()));
+        title.setText(theme.getTitle());
+        title.setTextSize(theme.getHeadlineSize());
+        title.setTextColor(theme.getHighlightFontColor());
+        caption.setText(theme.getCaption());
+        caption.setTextSize(theme.getTextSize());
+        caption.setTextColor(theme.getHighlightFontColor());
+
     }
 }
