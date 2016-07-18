@@ -16,6 +16,7 @@
 
 package us.bridgeses.minder_tasks.viewtranslators;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import java.util.Map;
 
 import us.bridgeses.minder_tasks.R;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
+import us.bridgeses.minder_tasks.factories.LocalContextImpl;
 import us.bridgeses.minder_tasks.interfaces.TaskListViewTranslator;
 import us.bridgeses.minder_tasks.listener.ContextMenuHandler;
 import us.bridgeses.minder_tasks.listener.RecyclerMenuListener;
@@ -129,21 +131,16 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
         taskList.setLayoutManager(new LinearLayoutManager(this));
 
         final Theme theme = new DarkDefaultTheme();
-        final PersistenceHelperImpl persistenceHelper = new PersistenceHelperImpl(this.getContentResolver());
         final TaskRecyclerAdapter taskAdapter = new TaskRecyclerAdapter(null, null, theme);
         final TasksLoader taskCallback = new TasksLoader(this, taskAdapter, -1,
                 TasksContract.TaskViewEntry.COLUMN_CREATION_TIME, true);
-        final LoaderManager loaderManager = getLoaderManager();
 
-        getContentResolver().registerContentObserver(TasksContract.TasksEntry.TASK_URI, true,
-                taskAdapter.getContentObserver());
+
 
         presenter = new TaskListPresenter(this,
-                persistenceHelper,
+                new LocalContextImpl(this),
                 taskAdapter,
-                getContentResolver(),
                 taskCallback,
-                loaderManager,
                 theme);
     }
 
@@ -179,6 +176,11 @@ public class TaskActivity extends FragmentActivity implements TaskListViewTransl
     @Override
     public void displayFragment(DialogFragment fragment) {
         fragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
+    public FragmentActivity getActivityContext() {
+        return this;
     }
 
     @Override

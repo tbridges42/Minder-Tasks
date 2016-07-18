@@ -20,6 +20,7 @@ import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,12 +29,14 @@ import java.util.Map;
 
 import us.bridgeses.minder_tasks.R;
 import us.bridgeses.minder_tasks.adapters.TaskRecyclerAdapter;
-import us.bridgeses.minder_tasks.fragments.TaskEditorFragment;
+import us.bridgeses.minder_tasks.factories.TaskEditorFactory;
+import us.bridgeses.minder_tasks.interfaces.LocalContext;
+import us.bridgeses.minder_tasks.interfaces.TaskEditor;
 import us.bridgeses.minder_tasks.interfaces.TaskListViewTranslator;
 import us.bridgeses.minder_tasks.listener.ContextMenuHandler;
 import us.bridgeses.minder_tasks.listener.RecyclerMenuListener;
+import us.bridgeses.minder_tasks.listener.TaskSaveListener;
 import us.bridgeses.minder_tasks.models.Task;
-import us.bridgeses.minder_tasks.startup.StartupFactory;
 import us.bridgeses.minder_tasks.storage.PersistenceHelper;
 import us.bridgeses.minder_tasks.storage.TasksContract;
 import us.bridgeses.minder_tasks.storage.TasksLoader;
@@ -42,44 +45,47 @@ import us.bridgeses.minder_tasks.theme.Theme;
 /**
  * Created by tbrid on 6/24/2016.
  */
-public class TaskListPresenter implements View.OnClickListener,
-        TaskRecyclerAdapter.TaskListener, RecyclerMenuListener, AdapterView.OnItemSelectedListener{
+public class TaskListPresenter {
 
     public static final int TASK_LOADER = 0;
     public static final int CATEGORY_LOADER = 1;
 
-    private TaskListViewTranslator taskList;
-    private PersistenceHelper persistenceHelper;
+    private final TaskListViewTranslator taskList;
+    private final PersistenceHelper persistenceHelper;
     private Theme theme;
     private ContextMenuHandler menuHandler;
-    private LoaderManager loaderManager;
-    private TaskRecyclerAdapter taskAdapter;
-    private TasksLoader taskCallback;
-    private ContentResolver contentResolver;
+    private final LoaderManager loaderManager;
+    private final TaskRecyclerAdapter taskAdapter;
+    private final TasksLoader taskCallback;
+    private final ContentResolver contentResolver;
+    private final TaskEditorFactory editorFactory;
+    private TaskEditor taskEditor;
 
-    public TaskListPresenter(TaskListViewTranslator taskList, PersistenceHelper persistenceHelper,
-                             TaskRecyclerAdapter taskAdapter, ContentResolver contentResolver,
-                             TasksLoader taskCallback, LoaderManager loaderManager, Theme theme) {
+    public TaskListPresenter(TaskListViewTranslator taskList, LocalContext localContext,
+                             TaskRecyclerAdapter adapter, TasksLoader taskCallback, Theme theme) {
         this.taskList = taskList;
-        this.persistenceHelper = persistenceHelper;
-        this.taskAdapter = taskAdapter;
-        this.contentResolver = contentResolver;
+        this.persistenceHelper = localContext.getPersistenceHelper();
+        this.taskAdapter = adapter;
+        this.contentResolver = localContext.getContentResolver();
         this.taskCallback = taskCallback;
-        this.loaderManager = loaderManager;
+        this.loaderManager = localContext.getLoaderManager();
+        this.editorFactory = localContext.getTaskEditorFactory();
         this.theme = theme;
     }
 
     public void initialize() {
         taskList.applyTheme(theme);
-        taskList.setOnSortSelectedListener(this);
-        taskList.setOnNewListener(this);
-        taskList.setMenuListener(this);
+        taskList.setOnSortSelectedListener(new TaskSortListener());
+        taskList.setOnNewListener(new NewTaskListener());
+        taskList.setMenuListener(new ContextMenuListener());
         //taskList.setOnCategorySelectedListener(this);
-        taskAdapter.setListener(this);
+        taskAdapter.setListener(new TaskSelectedListener());
         taskList.setTasksAdapter(taskAdapter);
         loaderManager.initLoader(TASK_LOADER, null, taskCallback);
         contentResolver.registerContentObserver(TasksContract.TasksEntry.TASK_URI,
                 true, new TaskObserver(new Handler()));
+        contentResolver.registerContentObserver(TasksContract.TasksEntry.TASK_URI, true,
+                taskAdapter.getContentObserver());
     }
 
     public void tearDown() {
@@ -92,67 +98,40 @@ public class TaskListPresenter implements View.OnClickListener,
         loaderManager.destroyLoader(TASK_LOADER);
     }
 
-    @Override
-    public void onClick(View v) {
-        editTask(-1);
-    }
-
     public boolean onBackPressed() {
         if (menuHandler != null) {
             menuHandler.dismiss();
             menuHandler = null;
             return true;
         }
+        if (taskEditor != null) {
+            taskEditor.dismiss();
+            taskEditor = null;
+            return true;
+        }
         return false;
-    }
-
-    @Override
-    public void onTaskSelected(long id, View v) {
-        editTask(id);
     }
 
     private void editTask(long id) {
-        Task task = null;
+        Task task = loadTask(id);
+        taskEditor = editorFactory.getEditor(taskList.getActivityContext(), task, theme);
+        taskEditor.setTaskSaveListener(new TaskEditorListener());
+        taskEditor.init();
+        taskEditor.show(taskList.getActivityContext());
+    }
+
+    @Nullable
+    private Task loadTask(long id) {
         if (id >= 0) {
-            task = persistenceHelper.loadTask(id);
+            return persistenceHelper.loadTask(id);
         }
-        TaskEditorFragment fragment = TaskEditorFragment.newInstance(task);
-        fragment.applyTheme(theme);
-        taskList.displayFragment(fragment);
-    }
-
-    @Override
-    public void onTaskContextRequested(long id, View v) {
-        // TODO: push up to TaskActivity
-        if (menuHandler != null) {
-            menuHandler.dismiss();
+        else {
+            return null;
         }
-        menuHandler = new ContextMenuHandler(this, R.menu.task_menu, id, v);
     }
 
-    @Override
-    public void onTaskDismissed(long id, View v) {
-        // TODO: 6/24/2016
-    }
-
-    @Override
-    public void onTaskCompleted(long id, View v) {
-        persistenceHelper.recordCompletedTask(id);
-    }
-
-    private void delete(long id) {
+    private void deleteTask(long id) {
         persistenceHelper.deleteTask(id);
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem, long id) {
-        // Encapsulate? Should not need to know ids
-        switch (menuItem.getItemId()) {
-            case R.id.delete: {
-                delete(id);
-            }
-        }
-        return false;
     }
 
     private void changeTaskSort(String sortColumn, boolean asc) {
@@ -161,36 +140,88 @@ public class TaskListPresenter implements View.OnClickListener,
         loaderManager.restartLoader(TASK_LOADER, null, taskCallback);
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String value = (String) parent.getAdapter().getItem(position);
-        // TODO: 6/24/2016 Get rid of hard-coded strings. Should this be here?
-        switch (value) {
-            case "Created":
-                changeTaskSort(TasksContract.TaskViewEntry.COLUMN_CREATION_TIME, true);
-                break;
-            case "Due Date":
-                changeTaskSort(TasksContract.TaskViewEntry.COLUMN_DUE_TIME, true);
-                break;
-            case "Duration":
-                changeTaskSort(TasksContract.TaskViewEntry.COLUMN_DURATION, true);
-                break;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO: 6/24/2016 What to do here?
-    }
-
     private void startup(Map<String, Object> preferences) {
-        StartupFactory factory = new StartupFactory(preferences);
         // TODO: 6/24/2016 How do we do this without a context?
         //new Handler().post(factory.getStartup(this));
     }
 
-    private class TaskObserver extends ContentObserver {
 
+    //<editor-fold desc="Listener Classes">
+    private class NewTaskListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            editTask(-1L);
+        }
+    }
+
+    private class TaskSelectedListener implements TaskRecyclerAdapter.TaskListener {
+
+        @Override
+        public void onTaskCompleted(long id, View v) {
+            persistenceHelper.recordCompletedTask(id);
+        }
+
+        @Override
+        public void onTaskContextRequested(long id, View v) {
+            // TODO: push up to TaskActivity
+            if (menuHandler != null) {
+                menuHandler.dismiss();
+            }
+            menuHandler = new ContextMenuHandler(new ContextMenuListener(),
+                    R.menu.task_menu, id, v);
+        }
+
+        @Override
+        public void onTaskDismissed(long id, View v) {
+            // TODO: 6/24/2016
+        }
+
+        @Override
+        public void onTaskSelected(long id, View v) {
+            editTask(id);
+        }
+    }
+
+    private class TaskSortListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String value = (String) parent.getAdapter().getItem(position);
+            // TODO: 6/24/2016 Get rid of hard-coded strings. Should this be here?
+            switch (value) {
+                case "Created":
+                    changeTaskSort(TasksContract.TaskViewEntry.COLUMN_CREATION_TIME, true);
+                    break;
+                case "Due Date":
+                    changeTaskSort(TasksContract.TaskViewEntry.COLUMN_DUE_TIME, true);
+                    break;
+                case "Duration":
+                    changeTaskSort(TasksContract.TaskViewEntry.COLUMN_DURATION, true);
+                    break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // TODO: 6/24/2016 What to do here?
+        }
+    }
+
+    private class ContextMenuListener implements RecyclerMenuListener {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem, long id) {
+            switch (menuItem.getItemId()) {
+                case R.id.delete: {
+                    deleteTask(id);
+                }
+            }
+            return false;
+        }
+    }
+
+    private class TaskObserver extends ContentObserver {
         /**
          * Creates a content observer.
          *
@@ -205,4 +236,22 @@ public class TaskListPresenter implements View.OnClickListener,
             loaderManager.restartLoader(TASK_LOADER, null, taskCallback);
         }
     }
+
+    private class TaskEditorListener implements TaskSaveListener {
+        @Override
+        public void onTaskSaved(Task task) {
+
+        }
+
+        @Override
+        public void onCancelled() {
+
+        }
+
+        @Override
+        public void onDelete() {
+
+        }
+    }
+    //</editor-fold>
 }

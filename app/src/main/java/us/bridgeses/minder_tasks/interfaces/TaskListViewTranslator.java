@@ -17,6 +17,7 @@
 package us.bridgeses.minder_tasks.interfaces;
 
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,4 +41,6 @@ public interface TaskListViewTranslator extends Themeable {
     void setTasksAdapter(RecyclerView.Adapter adapter);
 
     void displayFragment(DialogFragment fragment);
+
+    FragmentActivity getActivityContext();
 }

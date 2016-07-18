@@ -18,13 +18,13 @@ package us.bridgeses.minder_tasks.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -160,7 +160,7 @@ public class CategoryEditorFragment extends DialogFragment
         Drawable background = colorBlock.getBackground();
         int color = ((ColorDrawable) background).getColor();
         category = new Category(id, nameInput.getText().toString(), color);
-        PersistenceHelper helper = new PersistenceHelperImpl(getContext().getContentResolver());
+        PersistenceHelper helper = new PersistenceHelperImpl(getActivity().getContentResolver());
         id = helper.saveCategory(category);
         if (listener != null) {
             listener.handleSave(id);

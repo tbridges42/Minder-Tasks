@@ -10,17 +10,17 @@ import java.util.Map;
  */
 public class StartupFactory {
 
-    private final Map<String, Object> preferences;
+    private final Context context;
+
+    public StartupFactory(Context context) {
+        this.context = context;
+    }
 
     /**
      * @param preferences should be a map of Strings and Objects representing User preferences,
      *                    most likely created through SharedPreferences.getAll() or similar.
      */
-    public StartupFactory(Map<String, Object> preferences) {
-        this.preferences = preferences;
-    }
-
-    public Startup getStartup(Context context) {
+    public Startup getStartup(Map<String, Object> preferences) {
         if (!preferences.containsKey("hasRun")) {
             return new FirstRun(preferences, context);
         }

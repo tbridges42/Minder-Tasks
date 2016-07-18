@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '24.0.0'
     defaultConfig {
         applicationId "us.bridgeses.minder_tasks"
-        minSdkVersion 16
-        targetSdkVersion 23
+        minSdkVersion 17
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
         jackOptions {
@@ -36,12 +36,12 @@ android {
 }
 
 ext {
-    supportLibVersion = '23.4.0'
+    supportLibVersion = '24.0.0'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'us.bridgeses:slideDateTimePicker:1.1.0'
+    compile 'us.bridgeses:slideDateTimePicker:2.0.0'
     compile 'us.bridgeses:dateview:1.0.1'
     compile 'petrov.kristiyan.colorpicker:colorpicker-library:1.1.0'
     compile "com.android.support:appcompat-v7:${supportLibVersion}"

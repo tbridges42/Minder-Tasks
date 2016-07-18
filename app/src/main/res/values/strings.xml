@@ -14,6 +14,8 @@
     <string name="edit_category">Edit Category</string>
     <string name="new_category">New Category</string>
     <string name="label_input_name">Name:</string>
+    <string name="title">Title</string>
+    <string name="caption">Caption</string>
     <string-array name="array_input_duration">
         <item>&lt;5 mins</item>
         <item>5 mins</item>
