@@ -2,6 +2,8 @@ package us.bridgeses.minder_tasks.storage;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -31,7 +33,7 @@ public class DBHelperTest implements TasksContract {
 
     @Before
     public void setUp() throws Exception {
-        context = RuntimeEnvironment.application;
+        context = InstrumentationRegistry.getContext();
         if (dbHelper == null) {
             dbHelper = new DBHelper(context);
         }

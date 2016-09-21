@@ -135,7 +135,7 @@ public class CategoryEditorFragment extends DialogFragment
     }
 
     private void applyTheme() {
-        Dialog dialog = getDialog();
+        /*Dialog dialog = getDialog();
         LinearLayout titleLayout = (LinearLayout) getProtectedView(dialog,"android:id/topPanel");
         TextView title = (TextView) getProtectedView(dialog, "android:id/alertTitle");
         View bar = getProtectedView(dialog, "android:id/titleDivider");
@@ -144,12 +144,13 @@ public class CategoryEditorFragment extends DialogFragment
         titleLayout.getBackground()
                 .setColorFilter(mTheme.getPrimaryColor(), PorterDuff.Mode.MULTIPLY);
         bar.setBackgroundColor(mTheme.getHighlightColor());
-        ok.setTextColor(mTheme.getPrimaryFontColor());
+        ok.setTextColor(mTheme.getPrimaryFontColor());*/
     }
 
     private View getProtectedView(Dialog dialog, String id) {
-        return dialog.findViewById(dialog.getContext().getResources()
-                    .getIdentifier(id, null, null));
+//        return dialog.findViewById(dialog.getContext().getResources()
+//                    .getIdentifier(id, null, null));
+        return null;
     }
 
     private void save() {

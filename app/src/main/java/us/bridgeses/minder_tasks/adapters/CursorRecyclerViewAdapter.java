@@ -22,7 +22,6 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.BaseColumns;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
